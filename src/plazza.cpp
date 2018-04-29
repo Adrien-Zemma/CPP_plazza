@@ -25,6 +25,7 @@ void	Plazza::update()
 		dataMap << it.second;
 		for (auto el : dataMap)
 			_tabData[nb].at(el.first) = el.second;
+		nb++;
 	}
 }
 

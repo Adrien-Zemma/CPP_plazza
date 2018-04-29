@@ -25,14 +25,13 @@
 class Transport
 {
 public:
-	Transport(size_t status);
+	Transport();
 	~Transport();
+	Transport(std::string socketFile);
 	size_t	getFdTarget();
 	void	send(std::string);
 	std::string	reading();
 private:
-	void	createServer();
-	void	connectClient();
 	int	fd;
 	std::shared_ptr<std::map<int, std::pair<size_t, size_t>>>	fdTab;
 };

@@ -5,15 +5,35 @@
 ** transport
 */
 
-#include "../inc/transport.hpp"
+#include "transport.hpp"
 #include <sys/un.h>
 
-Transport::Transport(size_t status)
+Transport::Transport(std::string socketFile)
 {
-	if (status == 1)
-		createServer();
-	else
-		connectClient();
+	struct sockaddr_un addr;
+	char buf[100];
+	int cl;
+	int rc;
+	fd = socket(AF_UNIX, SOCK_STREAM, 0);
+	memset(&addr, 0, sizeof(addr));
+	addr.sun_family = AF_UNIX;
+	strncpy(addr.sun_path, socketFile.data(), sizeof(addr.sun_path)-1);
+	connect(fd, (struct sockaddr*)&addr, sizeof(addr));
+}
+
+Transport::Transport()
+{
+	struct sockaddr_un addr;
+	char buf[100];
+	int cl;
+	int rc;
+	fd = socket(AF_UNIX, SOCK_STREAM, 0);
+	memset(&addr, 0, sizeof(addr));
+	addr.sun_family = AF_UNIX;
+	strncpy(addr.sun_path, "test.sock", sizeof(addr.sun_path)-1);
+	bind(fd, (struct sockaddr*)&addr, sizeof(addr));
+	listen(fd, 5);
+	fd = accept(fd, NULL, NULL);
 }
 
 Transport::~Transport()
@@ -43,33 +63,3 @@ std::string	Transport::reading()
 	}
 	return tmp;
 }
-
-void	Transport::createServer()
-{
-	struct sockaddr_un addr;
-	char buf[100];
-	int cl;
-	int rc;
-	fd = socket(AF_UNIX, SOCK_STREAM, 0);
-	memset(&addr, 0, sizeof(addr));
-	addr.sun_family = AF_UNIX;
-	strncpy(addr.sun_path, "test.sock", sizeof(addr.sun_path)-1);
-	bind(fd, (struct sockaddr*)&addr, sizeof(addr));
-	listen(fd, 5);
-	fd = accept(fd, NULL, NULL);
-	
-}
-
-void	Transport::connectClient()
-{
-	struct sockaddr_un addr;
-	char buf[100];
-	int cl;
-	int rc;
-	fd = socket(AF_UNIX, SOCK_STREAM, 0);
-	memset(&addr, 0, sizeof(addr));
-	addr.sun_family = AF_UNIX;
-	strncpy(addr.sun_path, "test.sock", sizeof(addr.sun_path)-1);
-	connect(fd, (struct sockaddr*)&addr, sizeof(addr));
-}
-
