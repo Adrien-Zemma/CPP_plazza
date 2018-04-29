@@ -8,20 +8,6 @@
 #include "../inc/transport.hpp"
 #include <sys/un.h>
 
-Transport &operator<<(Transport &flux, const std::string &text)
-{
-	std::cout << "try send"<<std::endl;
-	flux.send(text);
-	return flux;
-}
-
-Transport &operator>>(Transport &flux, std::string &text)
-{
-	std::cout << "try get"<<std::endl;
-	text = flux.reading();
-	return flux;
-}
-
 Transport::Transport(size_t status)
 {
 	if (status == 1)
