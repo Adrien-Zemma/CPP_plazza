@@ -37,7 +37,6 @@ private:
 	std::shared_ptr<std::map<int, std::pair<size_t, size_t>>>	fdTab;
 };
 
-Transport &operator<<(Transport&flux, const std::string &text);
-Transport &operator>>(Transport&flux, std::string &text);
+#include "operateur.hpp"
 
 #endif /* !TRANSPORT_HPP_ */
