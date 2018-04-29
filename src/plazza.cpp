@@ -9,6 +9,7 @@
 
 Plazza::Plazza(char *str)
 {
+	str = str;
 }
 
 void	Plazza::manager()
@@ -31,5 +32,6 @@ void	Plazza::update()
 
 int	Plazza::start()
 {
+	return 0;
 }
 

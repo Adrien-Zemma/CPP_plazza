@@ -46,6 +46,7 @@ Transport &operator>>(Transport &flux, std::map<std::string, std::string> &map)
 			value.push_back(text[i]);
 		map.insert({key, value});	
 	}
+	return flux;
 }
 
 Transport &operator<<(std::map<std::string, std::string> &map, Transport &flux)
@@ -62,4 +63,5 @@ Transport &operator<<(std::map<std::string, std::string> &map, Transport &flux)
 			value.push_back(text[i]);
 		map.insert({key, value});	
 	}
+	return flux;
 }

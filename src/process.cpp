@@ -7,12 +7,18 @@
 
 #include "process.hpp"
 
-Process::Process()
+Process::Process(std::string socketName)
 {
 	_pid = 0;
 	_exit_status = false;
 	_pid = fork();
+	Transport _input(socketName);
 	//TODO: init communication
+}
+
+Process::toTransfert::toTransfert()
+{
+	ptr = std::make_shared<bool>(false);
 }
 
 size_t	Process::getPid()
@@ -32,18 +38,18 @@ void	Process::communication_support()
 
 void	Process::createNewTask()
 {
-	if (_threads.size < _threadMax)
+	if (_threads.size() < _threadMax)
 	{
-		auto tmp = std::make_shared<bool>(false);
-		_threads.end()->first = std::thread(getRegex, _queu.begin()->first, _queu.begin()->first, tmp);
-		_threads.end()->second = tmp;
+		_threads.end()->second = toTransfert();
+		auto tmp = _threads.end()->second;
+		_threads.end()->first = std::thread(getRegex, _threads.end()->second);
 	}
 }
 
 void	Process::checkThread()
 {
 	for (size_t i = 0; i < _threads.size(); i++){
-		if (*_threads.at(i).second.get() == true)
+		if (*_threads.at(i).second.ptr.get() == true)
 		{
 			_threads.erase(_threads.begin() + i);
 			checkThread();
@@ -55,7 +61,7 @@ void	Process::order_support()
 {
 	while(_exit_status)
 	{
-		if (_queu.size > 0)
+		if (_queu.size() > 0)
 			createNewTask();
 		checkThread();
 	}
@@ -71,4 +77,24 @@ void	Process::start()
 
 void	Process::newTask(std::pair<std::string, Information> order)
 {
+	order = order;
+}
+
+void    Process::getRegex(toTransfert &data)
+{
+	std::regex	toFind(data.request);
+	std::string	lines;
+	std::string	tmp;
+	std::smatch	m;
+	std::ifstream myfile	(data.file);
+	if (!myfile)
+		return ;
+	while (getline(myfile, tmp))
+		lines += tmp;
+	myfile.close();
+	while (std::regex_search (lines, m, toFind)) {
+		data.flux << m[0];
+        	lines = m.suffix().str();
+	}
+	std::this_thread::yield();
 }

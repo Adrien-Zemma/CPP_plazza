@@ -19,8 +19,9 @@
 #include <iostream>
 #include <vector>
 #include <map>
-#include "process.hpp"
-#include "transport.hpp"
+
+class Process;
+class Transport;
 
 class Plazza {
 	public:
@@ -42,8 +43,10 @@ class Plazza {
 		void	manager();
 		std::vector<std::map<std::string, std::string>> _tabData;
 		std::vector<std::pair<Transport, Transport>> _tabSocket;
-		std::vector< Process*>	_tabProcesses;
+		std::vector<Process>	_tabProcesses;
 
 };
+
+#include "process.hpp"
 
 #endif /* !PLAZZA_HPP_ */
