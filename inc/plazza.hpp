@@ -38,10 +38,11 @@ class Plazza {
 		std::map<Information, std::string>	informations;
 		size_t	_threadMax;
 	private:
+		void	update();
 		void	manager();
-		Transport	input;
-		Transport	output;
-		std::vector< Process*>	processes;
+		std::vector<std::map<std::string, std::string>> _tabData;
+		std::vector<std::pair<Transport, Transport>> _tabSocket;
+		std::vector< Process*>	_tabProcesses;
 
 };
 

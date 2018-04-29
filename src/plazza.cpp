@@ -15,6 +15,9 @@ void	Plazza::manager()
 {
 }
 
+void	Plazza::update()
+{}
+
 int	Plazza::start()
 {
 }
