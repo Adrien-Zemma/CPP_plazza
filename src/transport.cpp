@@ -11,9 +11,6 @@
 Transport::Transport(std::string socketFile)
 {
 	struct sockaddr_un addr;
-	char buf[100];
-	int cl;
-	int rc;
 	fd = socket(AF_UNIX, SOCK_STREAM, 0);
 	memset(&addr, 0, sizeof(addr));
 	addr.sun_family = AF_UNIX;
@@ -24,9 +21,6 @@ Transport::Transport(std::string socketFile)
 Transport::Transport()
 {
 	struct sockaddr_un addr;
-	char buf[100];
-	int cl;
-	int rc;
 	fd = socket(AF_UNIX, SOCK_STREAM, 0);
 	memset(&addr, 0, sizeof(addr));
 	addr.sun_family = AF_UNIX;
@@ -52,7 +46,6 @@ void	Transport::send(std::string txt)
 
 std::string	Transport::reading()
 {
-	int rc;
 	char	buf[2];
 	std::string	tmp;
 	while (read(fd, buf, 1))
