@@ -30,13 +30,7 @@ class Plazza {
 		~Plazza();
 		int start();
 	protected:
-		enum Information
-		{
-			PHONE_NUMBER = 0,
-			EMAIL_ADDRESS = 1,
-			IP_ADDRESS = 2
-		};
-		std::map<Information, std::string>	informations;
+		std::map<std::string, std::string>	_regexList; //first name, second regex
 		size_t	_threadMax;
 	private:
 		void	update();
