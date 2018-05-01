@@ -5,7 +5,7 @@
 ** process
 */
 
-#include "process.hpp"
+#include "../inc/process.hpp"
 
 Process::Process(std::string socketName)
 {
@@ -13,7 +13,6 @@ Process::Process(std::string socketName)
 	_exit_status = false;
 	_pid = fork();
 	Transport _input(socketName);
-	//TODO: init communication
 }
 
 Process::toTransfert::toTransfert()
@@ -28,21 +27,23 @@ size_t	Process::getPid()
 
 void	Process::communication_support()
 {
+	std::map<std::string, std::string> map;
 	while(_exit_status)
 	{
-		/*
-		**TODO:
-		*/
+		_input >> map;
 	}
 }
 
 void	Process::createNewTask()
 {
+	_start = clock();
+	_end = _start + (CLOCKS_PER_SEC * 5);
+
 	if (_threads.size() < _threadMax)
 	{
 		_threads.end()->second = toTransfert();
 		auto tmp = _threads.end()->second;
-		_threads.end()->first = std::thread(getRegex, _threads.end()->second);
+		_threads.end()->first = std::thread(&Process::getRegex, this, _threads.end()->second);
 	}
 }
 
@@ -59,20 +60,21 @@ void	Process::checkThread()
 
 void	Process::order_support()
 {
-	while(_exit_status)
-	{
-		if (_queu.size() > 0)
-			createNewTask();
-		checkThread();
-	}
+		
 }
 
 void	Process::start()
 {
-	communication_thrd = std::thread(Process::communication_support);
-	order_thrd = std::thread(Process::order_support);
-	communication_thrd.join();
-	order_thrd.join();
+	_start = clock();
+	_end = _start + (CLOCKS_PER_SEC * 5);
+
+	while(clock() <= _end)
+	{
+		communication_support();
+		if (_queu.size() > 0)
+			createNewTask();
+		checkThread();
+	}
 }
 
 void	Process::newTask(std::pair<std::string, Information> order)
