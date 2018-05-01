@@ -7,6 +7,8 @@
 
 #include "../inc/process.hpp"
 
+
+
 Process::Process(std::string socketName)
 {
 	_pid = 0;
@@ -15,10 +17,16 @@ Process::Process(std::string socketName)
 	Transport _input(socketName);
 }
 
+Process::~Process()
+{}
+
 Process::toTransfert::toTransfert()
 {
 	ptr = std::make_shared<bool>(false);
 }
+
+Process::toTransfert::~toTransfert()
+{}
 
 size_t	Process::getPid()
 {
@@ -43,7 +51,7 @@ void	Process::createNewTask()
 	{
 		_threads.end()->second = toTransfert();
 		auto tmp = _threads.end()->second;
-		_threads.end()->first = std::thread(&Process::getRegex, Process::_threads.end()->second);
+		_threads.end()->first = std::thread(&Process::getRegex, std::ref(_threads.end()->second));
 	}
 }
 

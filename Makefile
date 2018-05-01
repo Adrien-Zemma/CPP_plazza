@@ -15,9 +15,7 @@ SRCS	= ./src/operateurOverload.cpp \
 	  ./src/plazza.cpp \
 	  ./src/main.cpp \
 	  ./src/process.cpp \
-	  ./src/transport.cpp \
-	  ./test/client.cpp \
-	  ./test/serveur.cpp 
+	  ./src/transport.cpp 
 
 OBJS	= $(SRCS:.cpp=.o)
 

@@ -7,6 +7,12 @@
 
 #include "plazza.hpp"
 
+Plazza::Plazza()
+{}
+
+Plazza::~Plazza()
+{}
+
 Plazza::Plazza(char *str)
 {
 	str = str;
