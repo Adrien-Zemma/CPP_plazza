@@ -43,7 +43,7 @@ void	Process::createNewTask()
 	{
 		_threads.end()->second = toTransfert();
 		auto tmp = _threads.end()->second;
-		_threads.end()->first = std::thread(&Process::getRegex, this, _threads.end()->second);
+		_threads.end()->first = std::thread(&Process::getRegex, Process::_threads.end()->second);
 	}
 }
 
@@ -77,7 +77,7 @@ void	Process::start()
 	}
 }
 
-void	Process::newTask(std::pair<std::string, Information> order)
+void	Process::newTask(std::pair<std::string, std::string> order)
 {
 	order = order;
 }

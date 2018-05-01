@@ -17,13 +17,12 @@
 #include "plazza.hpp"
 #include "transport.hpp"
 
-class Process : private Plazza {
+class Process : public Plazza {
 public:
 	Process(std::string sockerName);
 	~Process();
 	void	start();
-	void	newTask(std::pair<std::string, Information> order);
-private:
+	void	newTask(std::pair<std::string, std::string> order);
 	class	toTransfert{
 	public:
 		toTransfert();
@@ -34,6 +33,8 @@ private:
 		std::shared_ptr<bool>	ptr;
 		std::vector<std::string>	result;
 	};
+private:
+	
 	size_t	getPid();
 	void	checkThread();
 	void	createNewTask();
