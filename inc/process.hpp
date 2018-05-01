@@ -14,6 +14,7 @@
 #include <fstream>
 #include <thread>
 #include <regex>
+#include <map>
 #include "plazza.hpp"
 #include "transport.hpp"
 

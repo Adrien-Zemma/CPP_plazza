@@ -40,9 +40,10 @@ Transport &operator>>(Transport &flux, std::map<std::string, std::string> &map)
 	text = flux.reading();
 	for(size_t i = 0; i < text.size(); i++)
 	{
-		for (int i = 0; text[i] != ':'; i++)
+		for (; text[i] != ':'; i++)
 			key.push_back(text[i]);
-		for (int i = 0; text[i] != ';' && text[i] != '\n'; i++)
+		i++;
+		for (; text[i] != ';' && text[i] != '\n'; i++)
 			value.push_back(text[i]);
 		map.insert({key, value});	
 	}

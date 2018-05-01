@@ -6,7 +6,9 @@
 */
 
 #include "transport.hpp"
-#include <sys/un.h>
+
+Transport::Transport()
+{}
 
 Transport::Transport(std::string socketFile)
 {
@@ -18,16 +20,17 @@ Transport::Transport(std::string socketFile)
 	connect(fd, (struct sockaddr*)&addr, sizeof(addr));
 }
 
-Transport::Transport()
+Transport::Transport(std::string socketFile, int nbclient)
 {
 	struct sockaddr_un addr;
 	fd = socket(AF_UNIX, SOCK_STREAM, 0);
 	memset(&addr, 0, sizeof(addr));
 	addr.sun_family = AF_UNIX;
-	strncpy(addr.sun_path, "test.sock", sizeof(addr.sun_path)-1);
+	strncpy(addr.sun_path, socketFile.data(), sizeof(addr.sun_path)-1);
 	bind(fd, (struct sockaddr*)&addr, sizeof(addr));
-	listen(fd, 5);
+	listen(fd, nbclient);
 	fd = accept(fd, NULL, NULL);
+	
 }
 
 Transport::~Transport()
@@ -51,8 +54,6 @@ std::string	Transport::reading()
 	while (read(fd, buf, 1))
 	{
 		tmp += buf[0];
-		if (buf[0] == '\n')
-			return tmp;
 	}
-	return tmp;
+	return tmp + '\n';
 }
