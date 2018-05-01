@@ -18,9 +18,11 @@
 
 #include <iostream>
 #include <vector>
+#include <memory>
 #include <map>
-#include "process.hpp"
-#include "transport.hpp"
+
+class Process;
+class Transport;
 
 class Plazza {
 	public:
@@ -29,20 +31,18 @@ class Plazza {
 		~Plazza();
 		int start();
 	protected:
-		enum Information
-		{
-			PHONE_NUMBER = 0,
-			EMAIL_ADDRESS = 1,
-			IP_ADDRESS = 2
-		};
-		std::map<Information, std::string>	informations;
+		std::shared_ptr<std::map<std::string, std::string>>	_regexList; //first name, second regex
 		size_t	_threadMax;
 	private:
+		void	update();
 		void	manager();
-		Transport	input;
-		Transport	output;
-		std::vector< Process*>	processes;
+		std::shared_ptr<std::vector<std::pair<std::string, std::string>>> _queu;
+		std::vector<std::map<std::string, std::string>> _tabData;
+		std::vector<std::pair<Transport, Transport>> _tabSocket;
+		std::vector<Process>	_tabProcesses;
 
 };
+
+#include "process.hpp"
 
 #endif /* !PLAZZA_HPP_ */
