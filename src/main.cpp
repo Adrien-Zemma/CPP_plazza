@@ -6,6 +6,12 @@
 */
 
 #include "plazza.hpp"
+#include "parse.hpp"
 
 int	main()
-{}
+{
+	Parse t;
+
+	t.read();
+	return 0;
+}
