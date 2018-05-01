@@ -20,9 +20,6 @@ class Parse : public Plazza {
 		~Parse();
 
 		int read();
-		void addEmail(std::string file);
-		void addPhone(std::string file);
-		void addIP(std::string file);
 	private:
 		std::shared_ptr<std::map<std::string, std::string>>	_regexList;
 		std::shared_ptr<std::vector<std::pair<std::string, std::string>>> _queu;

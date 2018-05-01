@@ -24,19 +24,6 @@ int	Parse::read()
 	return 0;
 }
 
-void	Parse::addEmail(std::string file)
-{
-
-}
-void	Parse::addPhone(std::string file)
-{
-
-}
-void	Parse::addIP(std::string file)
-{
-
-}
-
 std::vector<std::string> Parse::split_commands(std::string command)
 {
 	std::vector<std::string> ne;

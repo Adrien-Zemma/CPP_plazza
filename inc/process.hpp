@@ -18,7 +18,7 @@
 #include "plazza.hpp"
 #include "transport.hpp"
 
-class Process : public Plazza {
+class Process : private Plazza {
 public:
 	Process(std::string sockerName);
 	~Process();
