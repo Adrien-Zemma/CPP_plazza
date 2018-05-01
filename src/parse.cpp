@@ -34,7 +34,8 @@ std::vector<std::string> Parse::split_commands(std::string command)
 			ne.push_back(line);
 			line.clear();
 		}
-		line.push_back(command[i]);
+		else
+			line.push_back(command[i]);
 	}
 	ne.push_back(line);
 	return ne;
@@ -48,7 +49,6 @@ std::string	Parse::split(std::string line, char c, int nb)
 	for (int i = 0; line[i]; i++) {
 		if (line[i] == c) {
 			nb2++;
-
 			continue ;
 		}
 		if (nb2 > nb)
