@@ -10,8 +10,5 @@
 
 int	main()
 {
-	Parse t;
-
-	t.read();
 	return 0;
 }

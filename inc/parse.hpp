@@ -16,7 +16,7 @@
 
 class Parse : public Plazza {
 	public:
-		Parse();
+		Parse(std::shared_ptr<std::map<std::string, std::string>> regexList, std::shared_ptr<std::vector<std::pair<std::string, std::string>>> queue);
 		~Parse();
 
 		int read();
@@ -24,6 +24,8 @@ class Parse : public Plazza {
 		void addPhone(std::string file);
 		void addIP(std::string file);
 	private:
+		std::shared_ptr<std::map<std::string, std::string>>	_regexList;
+		std::shared_ptr<std::vector<std::pair<std::string, std::string>>> _queu;
 		void manage_commands(std::string line);
 		std::vector<std::string>	split_commands(std::string line);
 		std::string	split(std::string line, char c, int nb);

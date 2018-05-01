@@ -7,9 +7,11 @@
 
 #include "parse.hpp"
 
-Parse::Parse()
+Parse::Parse(std::shared_ptr<std::map<std::string, std::string>> regexList, std::shared_ptr<std::vector<std::pair<std::string, std::string>>> queue)
  : Plazza()
 {
+	_regexList = regexList;
+	_queu = queue;
 }
 
 Parse::~Parse()
@@ -18,7 +20,7 @@ Parse::~Parse()
 int	Parse::read()
 {
 	for (std::string line; std::getline(std::cin, line);)
-		manage_command(line);
+		manage_commands(line);
 	return 0;
 }
 
@@ -35,23 +37,23 @@ void	Parse::addIP(std::string file)
 
 }
 
-std::vector<std::string> split_commands(std::string command)
+std::vector<std::string> Parse::split_commands(std::string command)
 {
 	std::vector<std::string> ne;
 	std::string line;
 
 	for (int i = 0; command[i]; i++) {
 		if (command[i] == ';') {
-			ne.append(line);
+			ne.push_back(line);
 			line.clear();
 		}
-		line.append(command[i]);
+		line.push_back(command[i]);
 	}
-	ne.append(line);
+	ne.push_back(line);
 	return ne;
 }
 
-std::string	split(std::string line, char c, int nb)
+std::string	Parse::split(std::string line, char c, int nb)
 {
 	std::string command;
 	int	nb2 = 0;
@@ -59,21 +61,36 @@ std::string	split(std::string line, char c, int nb)
 	for (int i = 0; line[i]; i++) {
 		if (line[i] == c) {
 			nb2++;
+
 			continue ;
 		}
-		if (nb2 >= nb)
+		if (nb2 > nb)
 			break ;
-		command.append(line[i]);
+		else if (nb2 == nb)
+			command.push_back(line[i]);
 	}
 	return command;
 }
 
-void manage_commands(std::string line)
+void	Parse::manage_commands(std::string line)
 {
 	std::vector<std::string> commands = split_commands(line);
 
 	for (auto &command: commands) {
-		std::string type = split(line, ' ', std::count(s.begin(), s.end(), ' '));
-		
+		std::string type = split(command, ' ', std::count(command.begin(), command.end(), ' '));
+		std::cout << "Started with type: " << type << std::endl;
+		try {
+			// if (_regexList.find(type) != _regexList.end()) {
+				for (int i = 0; i != std::count(command.begin(), command.end(), ' '); i++) {
+					_queu.get()->push_back(std::pair<std::string, std::string>(split(command, ' ', i), type));
+				}
+			// }
+  		}
+		catch (const std::out_of_range& oor) {
+			std::cerr << "No type declared for: " << oor.what() << std::endl;
+  		}
+	}
+	for (auto &el: *_queu.get()) {
+    		std::cout << el.first << " => " << el.second << std::endl;
 	}
 }
