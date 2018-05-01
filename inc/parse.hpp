@@ -12,6 +12,7 @@
 #include <vector>
 #include <string>
 #include <iostream>
+#include <algorithm>
 
 class Parse : public Plazza {
 	public:
@@ -23,6 +24,9 @@ class Parse : public Plazza {
 		void addPhone(std::string file);
 		void addIP(std::string file);
 	private:
+		void manage_commands(std::string line);
+		std::vector<std::string>	split_commands(std::string line);
+		std::string	split(std::string line, char c, int nb);
 
 };
 #endif /* !PARSE_HPP_ */
