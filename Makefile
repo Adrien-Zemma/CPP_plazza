@@ -21,15 +21,15 @@ SRCS	= ./src/operateurOverload.cpp \
 
 OBJS	= $(SRCS:.cpp=.o)
 
-CPPFLAGS = -I ./inc
-CPPFLAGS += -W -Wall -Wextra
+CXXFLAGS = -I ./inc
+CXXFLAGS += -W -Wall -Wextra -pthread -std=c++14
+LDLIBS = -lpthread
 LDFLAGS = 
 
 all: $(NAME)
 
 $(NAME): $(OBJS)
-	 $(CC) $(OBJS) -o $(NAME) $(LDFLAGS)
-
+	 $(CC) $(CXXFLAGS) $(OBJS) -o $(NAME) $(LDLIBS)
 clean:
 	$(RM) $(OBJS)
 

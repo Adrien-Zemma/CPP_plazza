@@ -42,6 +42,9 @@ private:
 	static void	getRegex(toTransfert &data);
 	pid_t	_pid;
 	bool	_exit_status;
+
+	clock_t	_start;
+	clock_t	_end;
 	Transport	_input;
 	Transport	_output;
 	size_t	_availableThread;
