@@ -65,19 +65,15 @@ void	Parse::manage_commands(std::string line)
 
 	for (auto &command: commands) {
 		std::string type = split(command, ' ', std::count(command.begin(), command.end(), ' '));
-		std::cout << "Started with type: " << type << std::endl;
 		try {
-			// if (_regexList.find(type) != _regexList.end()) {
+			if (_regexList.find(type) != _regexList.end()) {
 				for (int i = 0; i != std::count(command.begin(), command.end(), ' '); i++) {
 					_queu.get()->push_back(std::pair<std::string, std::string>(split(command, ' ', i), type));
 				}
-			// }
+			}
   		}
 		catch (const std::out_of_range& oor) {
 			std::cerr << "No type declared for: " << oor.what() << std::endl;
   		}
-	}
-	for (auto &el: *_queu.get()) {
-    		std::cout << el.first << " => " << el.second << std::endl;
 	}
 }
