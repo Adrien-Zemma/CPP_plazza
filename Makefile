@@ -13,6 +13,7 @@ RM	= rm -f
 
 SRCS	= ./src/operateurOverload.cpp \
 	  ./src/plazza.cpp \
+	  ./src/parse.cpp	\
 	  ./src/main.cpp \
 	  ./src/process.cpp \
 	  ./src/transport.cpp 
