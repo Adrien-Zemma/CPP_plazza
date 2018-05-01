@@ -18,6 +18,7 @@
 
 #include <iostream>
 #include <vector>
+#include <memory>
 #include <map>
 
 class Process;
@@ -30,11 +31,12 @@ class Plazza {
 		~Plazza();
 		int start();
 	protected:
-		std::map<std::string, std::string>	_regexList; //first name, second regex
+		std::shared_ptr<std::map<std::string, std::string>>	_regexList; //first name, second regex
 		size_t	_threadMax;
 	private:
 		void	update();
 		void	manager();
+		std::shared_ptr<std::vector<std::pair<std::string, std::string>>> _queu;
 		std::vector<std::map<std::string, std::string>> _tabData;
 		std::vector<std::pair<Transport, Transport>> _tabSocket;
 		std::vector<Process>	_tabProcesses;

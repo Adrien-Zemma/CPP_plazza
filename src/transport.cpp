@@ -54,8 +54,6 @@ std::string	Transport::reading()
 	while (read(fd, buf, 1))
 	{
 		tmp += buf[0];
-		if (buf[0] == '\n')
-			return tmp;
 	}
-	return tmp;
+	return tmp + '\n';
 }

@@ -7,14 +7,13 @@
 
 #include "../inc/process.hpp"
 
-
-
 Process::Process(std::string socketName)
 {
 	_pid = 0;
 	_exit_status = false;
 	_pid = fork();
 	Transport _input(socketName);
+	Transport _output(socketName + "R");
 }
 
 Process::~Process()
@@ -36,9 +35,18 @@ size_t	Process::getPid()
 void	Process::communication_support()
 {
 	std::map<std::string, std::string> map;
-	while(_exit_status)
+	_input >> map;
+	auto tmp = map["queu"];
+	std::string key;
+	std::string value;
+	for(size_t i = 0; i < tmp.size(); i++)
 	{
-		_input >> map;
+		for (; tmp[i] != '|'; i++)
+			key.push_back(tmp[i]);
+		i++;
+		for (; tmp[i] != ',' && tmp[i] != '\n'; i++)
+			value.push_back(tmp[i]);
+		_queu.push_back({key, value});	
 	}
 }
 
@@ -67,9 +75,7 @@ void	Process::checkThread()
 }
 
 void	Process::order_support()
-{
-		
-}
+{}
 
 void	Process::start()
 {
