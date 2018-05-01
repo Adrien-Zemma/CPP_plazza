@@ -8,7 +8,13 @@
 #include "plazza.hpp"
 #include "parse.hpp"
 
-int	main()
+int	main(int ac, char **av)
 {
-	return 0;
+	if (ac == 2)
+	{
+		Plazza obj(av[1]);
+		obj.start();
+		return 0;
+	}
+	return 84;
 }
