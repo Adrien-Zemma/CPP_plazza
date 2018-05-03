@@ -7,24 +7,22 @@
 
 #include "../inc/process.hpp"
 
-Process::Process(std::string socketName)
+Process::Process(std::string socketName, size_t threadMax)
+	:_pool(threadMax)
 {
+	_threadMax = threadMax;
 	_pid = 0;
 	_exit_status = false;
+	_sockerName = socketName;
 	_pid = fork();
-	Transport _input(socketName);
-	Transport _output(socketName + "R");
+	if (_pid == 0)
+	{
+		Transport _input("." + socketName);
+		Transport _output("." + socketName + "R");
+	}
 }
 
 Process::~Process()
-{}
-
-Process::toTransfert::toTransfert()
-{
-	ptr = std::make_shared<bool>(false);
-}
-
-Process::toTransfert::~toTransfert()
 {}
 
 size_t	Process::getPid()
@@ -32,50 +30,29 @@ size_t	Process::getPid()
 	return _pid;
 }
 
-void	Process::communication_support()
+void	Process::sendResult()
 {
-	std::map<std::string, std::string> map;
-	_input >> map;
-	auto tmp = map["queu"];
-	std::string key;
-	std::string value;
-	for(size_t i = 0; i < tmp.size(); i++)
+	auto tab = _pool.getResult();
+	if (tab.size() > 0)
 	{
-		for (; tmp[i] != '|'; i++)
-			key.push_back(tmp[i]);
-		i++;
-		for (; tmp[i] != ',' && tmp[i] != '\n'; i++)
-			value.push_back(tmp[i]);
-		_queu.push_back({key, value});	
+		_start = clock();
+		_end = _start + (CLOCKS_PER_SEC * 5);
+		std::string tmp;
+		tmp = "result:";
+		for (auto el: tab)
+			tmp += el + "\n";
+		_output << tmp;
+
 	}
 }
 
-void	Process::createNewTask()
+void	Process::sendInformation()
 {
-	_start = clock();
-	_end = _start + (CLOCKS_PER_SEC * 5);
-
-	if (_threads.size() < _threadMax)
-	{
-		_threads.end()->second = toTransfert();
-		auto tmp = _threads.end()->second;
-		_threads.end()->first = std::thread(&Process::getRegex, std::ref(_threads.end()->second));
-	}
+	auto nb = _pool.getInfo();
+	std::string tmp = "info:";
+	tmp += _sockerName + "," + std::to_string(nb) + "\n";
+	_output << tmp;
 }
-
-void	Process::checkThread()
-{
-	for (size_t i = 0; i < _threads.size(); i++){
-		if (*_threads.at(i).second.ptr.get() == true)
-		{
-			_threads.erase(_threads.begin() + i);
-			checkThread();
-		}
-	}
-}
-
-void	Process::order_support()
-{}
 
 void	Process::start()
 {
@@ -84,33 +61,13 @@ void	Process::start()
 
 	while(clock() <= _end)
 	{
-		communication_support();
-		if (_queu.size() > 0)
-			createNewTask();
-		checkThread();
+		for (auto el: _queu)
+		{
+			_pool.addCommande(el);
+		}
+		_queu.clear();
+		sendResult();
+		sendInformation();
 	}
-}
-
-void	Process::newTask(std::pair<std::string, std::string> order)
-{
-	order = order;
-}
-
-void    Process::getRegex(toTransfert &data)
-{
-	std::regex	toFind(data.request);
-	std::string	lines;
-	std::string	tmp;
-	std::smatch	m;
-	std::ifstream myfile	(data.file);
-	if (!myfile)
-		return ;
-	while (getline(myfile, tmp))
-		lines += tmp;
-	myfile.close();
-	while (std::regex_search (lines, m, toFind)) {
-		data.flux << m[0];
-        	lines = m.suffix().str();
-	}
-	std::this_thread::yield();
+	exit(0);
 }

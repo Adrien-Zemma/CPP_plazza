@@ -22,28 +22,46 @@
 #include <memory>
 #include <ctime>
 #include <map>
+#include "transport.hpp"
+#include "process.hpp"
+#include <sstream>
+/*
+	lire sur input
+	ecrire sur output
+*/
 
-class Process;
-class Transport;
 
 class Plazza {
+public:
+	Plazza(char *str); 
+	~Plazza();
+	int start();
+	class DataProc {
 	public:
-		Plazza();
-		Plazza(char *str); 
-		~Plazza();
-		int start();
-	protected:
-		std::shared_ptr<std::map<std::string, std::string>>	_regexList; //first name, second regex
-		size_t	_threadMax;
-	private:
-		void	update();
-		void	manager();
-		bool	_exit_status;
-		std::shared_ptr<std::vector<std::pair<std::string, std::string>>> _queu;
-		std::vector<std::map<std::string, std::string>> _tabData;
-		std::vector<std::pair<Transport, Transport>> _tabSocket;
-		std::vector<Process>	_tabProcesses;
+		DataProc(std::string name, size_t threadMax);
+		std::string	_name;
+		Process		_slave;
+		Transport	_input;
+		Transport	_output;
+		size_t		_infos;
+	};
+	std::shared_ptr<std::map<std::string, std::string>>	getRegexList();
+	std::shared_ptr<std::vector<std::pair<std::string, std::string>>> getQueu();
+	std::vector<std::string>	getResult(); // file result
 
+private:
+	void	update();
+	void	manager();
+	void	sendToProcess();
+	void	buildNewProcess();
+	std::vector<std::string>	cutString(std::string str);
+	void	updateData(size_t nb, std::string info);
+	size_t	_threadMax;
+	bool	_exit_status;
+	std::vector<std::unique_ptr<DataProc>> _info;
+	std::shared_ptr<std::vector<std::string>> _result;
+	std::shared_ptr<std::map<std::string, std::string>>	_regexList; //first name, second regex
+	std::shared_ptr<std::vector<std::pair<std::string, std::string>>> _queu;
 };
 
 #include "process.hpp"

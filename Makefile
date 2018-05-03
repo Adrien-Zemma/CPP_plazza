@@ -16,12 +16,13 @@ SRCS	= ./src/operateurOverload.cpp \
 	  ./src/parse.cpp	\
 	  ./src/main.cpp \
 	  ./src/process.cpp \
+	  ./src/threadpool.cpp \
 	  ./src/transport.cpp 
 
 OBJS	= $(SRCS:.cpp=.o)
 
 CXXFLAGS = -I ./inc
-CXXFLAGS += -W -Wall -Wextra -pthread -std=c++14
+CXXFLAGS += -Wall -Wextra -pthread -std=c++14
 LDLIBS = -lpthread
 LDFLAGS = 
 

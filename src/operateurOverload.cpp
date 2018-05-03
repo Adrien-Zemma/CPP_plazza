@@ -31,38 +31,3 @@ Transport &operator<<(std::string &text, Transport &flux)
 	text = flux.reading();
 	return flux;
 }
-
-Transport &operator>>(Transport &flux, std::map<std::string, std::string> &map)
-{
-	std::string	text;
-	std::string	key;
-	std::string	value;
-	text = flux.reading();
-	for(size_t i = 0; i < text.size(); i++)
-	{
-		for (; text[i] != ':'; i++)
-			key.push_back(text[i]);
-		i++;
-		for (; text[i] != ';' && text[i] != '\n'; i++)
-			value.push_back(text[i]);
-		map.insert({key, value});	
-	}
-	return flux;
-}
-
-Transport &operator<<(std::map<std::string, std::string> &map, Transport &flux)
-{
-	std::string	text;
-	std::string	key;
-	std::string	value;
-	text = flux.reading();
-	for(size_t i = 0; i < text.size(); i++)
-	{
-		for (int i = 0; text[i] != ':'; i++)
-			key.push_back(text[i]);
-		for (int i = 0; text[i] != ';' && text[i] != '\n'; i++)
-			value.push_back(text[i]);
-		map.insert({key, value});	
-	}
-	return flux;
-}

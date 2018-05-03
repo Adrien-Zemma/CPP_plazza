@@ -8,87 +8,120 @@
 #include "plazza.hpp"
 #include "parse.hpp"
 
-Plazza::Plazza()
-{}
-
-Plazza::~Plazza()
-{}
-
 Plazza::Plazza(char *str)
 {
 	std::srand(std::time(nullptr));
 	_exit_status = true;
 	_threadMax = atoi(str);
-	_regexList = std::make_shared<std::map<std::string,
-	std::string>>();
-	_queu = std::make_shared<std::vector<std::pair<std::string,
-	std::string>>>();
-	_regexList.get()->insert({"EMAIL","(\\w+)(\\.|_)?(\\w*)@(\\w+)(\\.(\\w
-	+))+"});
-	_regexList.get()->insert({"PHONE","^(?:(?:\+|00)33|0)\s*[1-9](?:[\s.-]
-	*\d{2}){4}$"});
-	_regexList.get()->insert({"IP", "^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]
-	?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"})
+	_regexList = std::make_shared<std::map<std::string, std::string>>();
+	_queu = std::make_shared<std::vector<std::pair<std::string, std::string>>>();
+	_regexList.get()->insert({"EMAIL", "(\\w+)(\\.|_)?(\\w*)@(\\w+)(\\.(\\w+))+"});
+	_regexList.get()->insert({"PHONE","0647005996"});
+	_regexList.get()->insert({"IP", "(\\d{1,3}(\\.\\d{1,3}){3})"});
+}
+
+Plazza::~Plazza()
+{}
+
+Plazza::DataProc::DataProc(std::string name, size_t threadMax)
+	:_name(name),_slave(name, threadMax), _input("." + _name), _output("." + _name + "R")
+{
 }
 
 void	Plazza::buildNewProcess()
 {
-	std::string name(rand()%1000);
-	_tabProcesses.push_back(Process());
-	_tabSocket.push_back({Transport("." + name), Transport("." + name + "R")})
+	DataProc tmp (std::to_string(std::rand() % 1000), _threadMax);
+	_info.push_back(std::make_unique<DataProc>(std::to_string(std::rand() % 1000), _threadMax));
+	//DataProc tmp("coucou", 12);
+	//_info.push_back(tmp);
+	//_info.push_back(tmp);
+	//DataProc tmp (std::to_string(std::rand() % 1000), _threadMax);
+	//_info.push_back(DataProc(std::to_string(std::rand() % 1000), _threadMax));
+	//_info.emplace_back(std::to_string(std::rand() % 1000), _threadMax);
 }
 
-void	sendToProcess()
+std::shared_ptr<std::map<std::string, std::string>>	Plazza::getRegexList()
 {
-	size_t i = -1;
-	size_t	target;
-	std::string	tmp;
-	for (auto it: _tabProcesses)
+	return _regexList;
+}
+
+void	Plazza::sendToProcess()
+{
+	for (auto &it: _info)
 	{
-		i++;
-		target = stoi(_tabData[i]["threadLeft"])
-		for (size_t nb = 0; nb < target; nb++)
+		for (size_t nb = 0; nb < it.get()->_infos && _queu.get()->size() > 0; nb ++)
 		{
-			tmp += _queu.begin().first + "|" + _queu.begin().second;
-			_queu.erase(_queu.begin());
+			it.get()->_output << "queu:" + _queu.get()->begin()->first + "," + _queu.get()->begin()->first + "\n";
+			_queu.get()->erase(_queu.get()->begin());
 		}
-		if (tmp.size())
-			_tabSocket[i] << "queu:" + tmp;
 	}
 }
 
 void	Plazza::manager()
 {
-	for(auto it: _queu)
+	for (size_t i = 0; i < _queu.get()->size(); i++)
 	{
-		update();
-		if (_tabProcesses.size() == 0)
+		if (_queu.get()->size() > 0)
+		{
 			buildNewProcess();
-		sendToProcess();
+			update();
+			sendToProcess();
+		}
+		update();
 	}
+}
+
+std::vector<std::string>	Plazza::cutString(std::string str)
+{
+	std::vector<std::string> tmp;
+	std::string line;
+	size_t nb = 0;
+	for(; str[nb] != ':'; nb++)
+		line += str[nb];
+	tmp.push_back(line);
+	line.clear();
+	nb++;
+	for (; str[nb] != ','; nb++)
+		line += str[nb];
+	tmp.push_back(line);
+	line.clear();
+	nb++;
+	for (; str[nb] != '\n' && nb < str.size(); nb++)
+		line += str[nb];
+	tmp.push_back(line);
+	return tmp;
+}
+
+void	Plazza::updateData(size_t nb, std::string info)
+{
+	std::vector<std::string> tmp = cutString(info);
+	if (tmp[0] == "info")
+		_info[nb].get()->_infos = stoi(tmp[2]);
+	else if (tmp[0] == "result")
+		_result.get()->push_back(tmp[1] + " " + tmp[2]);
 }
 
 void	Plazza::update()
 {
-	size_t	nb = 0;
+	
 	std::map<std::string, std::string> dataMap;
-	for (auto it: _tabSocket)
+	for (size_t nb = 0; nb < _info.size(); nb++)
 	{
-		it.second << "update";
-		dataMap << it.first;
-		for (auto el : dataMap)
-			_tabData[nb].at(el.first) = el.second;
-		nb++;
+		_info[nb].get()->_output << "update:\n";
+		std::string tmp = "c";
+		while (tmp != "")
+		{
+			tmp << _info[nb].get()->_input;
+			updateData(nb, tmp);
+		}
 	}
 }
 
 int	Plazza::start()
 {
-	Parse tmp (_regexList, _queu);
 	while(_exit_status)
 	{
-		tmp.read();
-		manage();
+		manager();
 	}
 	return 0;
 }
