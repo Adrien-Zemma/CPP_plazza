@@ -12,6 +12,7 @@ Transport::Transport()
 
 Transport::Transport(std::string socketFile)
 {
+	std::cout << "second" << std::endl;
 	struct sockaddr_un addr;
 	fd = socket(AF_UNIX, SOCK_STREAM, 0);
 	memset(&addr, 0, sizeof(addr));
@@ -22,6 +23,7 @@ Transport::Transport(std::string socketFile)
 
 Transport::Transport(std::string socketFile, int nbclient)
 {
+	std::cout << "first" << std::endl;
 	struct sockaddr_un addr;
 	fd = socket(AF_UNIX, SOCK_STREAM, 0);
 	memset(&addr, 0, sizeof(addr));

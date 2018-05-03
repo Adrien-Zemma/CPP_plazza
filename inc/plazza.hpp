@@ -36,6 +36,7 @@ public:
 	Plazza(char *str); 
 	~Plazza();
 	int start();
+	void	manager();
 	class DataProc {
 	public:
 		DataProc(std::string name, size_t threadMax);
@@ -45,13 +46,12 @@ public:
 		Transport	_output;
 		size_t		_infos;
 	};
+	std::vector<std::string>	getResult(); // file result
 	std::shared_ptr<std::map<std::string, std::string>>	getRegexList();
 	std::shared_ptr<std::vector<std::pair<std::string, std::string>>> getQueu();
-	std::vector<std::string>	getResult(); // file result
 
 private:
 	void	update();
-	void	manager();
 	void	sendToProcess();
 	void	buildNewProcess();
 	std::vector<std::string>	cutString(std::string str);

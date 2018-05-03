@@ -24,19 +24,24 @@ Plazza::~Plazza()
 {}
 
 Plazza::DataProc::DataProc(std::string name, size_t threadMax)
-	:_name(name),_slave(name, threadMax), _input("." + _name), _output("." + _name + "R")
+	:_name(name),_slave(name, threadMax), _input("." + _name, 2), _output("." + _name + "R")
 {
 }
 
 void	Plazza::buildNewProcess()
 {
-	DataProc tmp (std::to_string(std::rand() % 1000), _threadMax);
+	//DataProc tmp (std::to_string(std::rand() % 1000), _threadMax);
 	_info.push_back(std::make_unique<DataProc>(std::to_string(std::rand() % 1000), _threadMax));
 }
 
 std::shared_ptr<std::map<std::string, std::string>>	Plazza::getRegexList()
 {
 	return _regexList;
+}
+
+std::shared_ptr<std::vector<std::pair<std::string, std::string>>> Plazza::getQueu()
+{
+	return _queu;
 }
 
 std::vector<std::string>	Plazza::getResult()

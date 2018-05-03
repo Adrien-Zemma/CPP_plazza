@@ -18,8 +18,9 @@ Parse::~Parse()
 
 int	Parse::read()
 {
-	for (std::string line; std::getline(std::cin, line);)
-		manage_commands(line);
+	std::string line;
+	std::getline(std::cin, line);
+	manage_commands(line);
 	return 0;
 }
 
