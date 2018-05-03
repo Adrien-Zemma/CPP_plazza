@@ -17,8 +17,10 @@
 	#define PLAZZA_HPP_
 
 #include <iostream>
+#include <cstdlib>
 #include <vector>
 #include <memory>
+#include <ctime>
 #include <map>
 
 class Process;
@@ -36,6 +38,7 @@ class Plazza {
 	private:
 		void	update();
 		void	manager();
+		bool	_exit_status;
 		std::shared_ptr<std::vector<std::pair<std::string, std::string>>> _queu;
 		std::vector<std::map<std::string, std::string>> _tabData;
 		std::vector<std::pair<Transport, Transport>> _tabSocket;

@@ -40,6 +40,7 @@ private:
 	void	checkThread();
 	void	createNewTask();
 	void	order_support();
+	void	buildNewProcess();
 	void	communication_support();
 	static void	getRegex(toTransfert &data);
 	pid_t	_pid;
