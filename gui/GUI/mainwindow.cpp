@@ -27,10 +27,8 @@ void MainWindow::on_click_delete()
     QPushButton *button = (QPushButton *)sender();
     int i = 0;
 
-    qDebug() << "Clicked!";
     for (auto &it : _files_labels) {
         if (button == it.second) {
-            qDebug() << "Deleted elem[" << i << "]";
             it.first.first->deleteLater();
             it.first.second->deleteLater();
             it.second->deleteLater();
