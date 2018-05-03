@@ -29,6 +29,16 @@ all: $(NAME)
 
 $(NAME): $(OBJS)
 	 $(CC) $(CXXFLAGS) $(OBJS) -o $(NAME) $(LDLIBS)
+
+gui:
+	$(MAKE) GUI -C gui/GUI
+
+clean_gui:
+	$(MAKE) clean -C gui/GUI
+
+fclean_gui:
+	$(MAKE) fclean -C gui/GUI
+
 clean:
 	$(RM) $(OBJS)
 
@@ -37,4 +47,4 @@ fclean: clean
 
 re: fclean all
 
-.PHONY: all clean fclean re
+.PHONY: all gui clean_gui clean fclean_gui fclean re
