@@ -16,8 +16,7 @@ Plazza::Plazza(char *str)
 	std::srand(std::time(nullptr));
 	_exit_status = true;
 	_threadMax = atoi(str);
-	_regexList = std::make_shared<std::map<std::string,
-	std::string>>();
+	_regexList = std::make_shared<std::map<std::string, std::string>>();
 	_queu = std::make_shared<std::vector<std::pair<std::string, std::string>>>();
 	_regexList.get()->insert({"EMAIL","(\\w+)(\\.|_)?(\\w*)@(\\w+)(\\.(\\w+))+"});
 	_regexList.get()->insert({"PHONE","^(?:(?:\+|00)33|0)\s*[1-9](?:[\s.-]*\d{2}){4}$"});
@@ -36,6 +35,11 @@ void	Plazza::buildNewProcess()
 {
 
 	_info.push_back(data_t());
+}
+
+std::shared_ptr<std::map<std::string, std::string>>	Plazza::getRegexList()
+{
+	return _regexList;
 }
 
 void	Plazza::sendToProcess()

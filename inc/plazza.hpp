@@ -40,6 +40,8 @@ public:
 		Process		_slave;
 		std::map<std::string, std::string>	_infos;
 	};
+	std::shared_ptr<std::map<std::string, std::string>>	getRegexList();
+
 private:
 	void	update();
 	void	manager();

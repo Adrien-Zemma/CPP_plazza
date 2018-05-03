@@ -13,20 +13,23 @@
 #include <unistd.h>
 #include <fstream>
 #include <thread>
+#include <memory>
 #include <regex>
 #include <map>
 #include "plazza.hpp"
 #include "transport.hpp"
+#include "threadpool.hpp"
 
 class Process {
 public:
+	Process();
 	Process(std::string sockerName);
 	Process(const Process &other);
 	Process	&operator=(const Process &other);
 	~Process();
 	void	start();
 	void	newTask(std::pair<std::string, std::string> order);
-	class	toTransfert{
+	class toTransfert{
 	public:
 		toTransfert();
 		~toTransfert();
@@ -34,11 +37,11 @@ public:
 		std::string	file;
 		std::string	request;
 		std::shared_ptr<bool>	ptr;
-		std::vector<std::string>	result;
 	};
 
 private:
 	size_t	getPid();
+	void	sendResult();
 	void	checkThread();
 	void	createNewTask();
 	void	order_support();
@@ -50,13 +53,12 @@ private:
 	clock_t	_start;
 	size_t	_threadMax;
 	bool	_exit_status;
+	Threadpool	_pool;
 	Transport	_input;
 	Transport	_output;
-	size_t	_availableThread;
-	std::thread	order_thrd;
-	std::thread	communication_thrd;
-	std::vector<std::pair<std::thread, toTransfert>> _threads;
-	std::vector<std::pair<std::string, std::string>>	_queu;
+	std::shared_ptr<std::vector<std::pair<std::string, std::string>>>	_queu;
+	std::shared_ptr<std::vector<std::pair<std::pair<std::string, std::string>, std::string>>> _result //file, regex, result
+	
 };
 
 #endif /* !PROCESS_HPP_ */
