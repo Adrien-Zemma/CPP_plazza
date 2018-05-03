@@ -8,9 +8,6 @@
 #include "plazza.hpp"
 #include "parse.hpp"
 
-Plazza::~Plazza()
-{}
-
 Plazza::Plazza(char *str)
 {
 	std::srand(std::time(nullptr));
@@ -18,23 +15,29 @@ Plazza::Plazza(char *str)
 	_threadMax = atoi(str);
 	_regexList = std::make_shared<std::map<std::string, std::string>>();
 	_queu = std::make_shared<std::vector<std::pair<std::string, std::string>>>();
-	_regexList.get()->insert({"EMAIL","(\\w+)(\\.|_)?(\\w*)@(\\w+)(\\.(\\w+))+"});
-	_regexList.get()->insert({"PHONE","^(?:(?:\+|00)33|0)\s*[1-9](?:[\s.-]*\d{2}){4}$"});
-	_regexList.get()->insert({"IP", "^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"});
+	_regexList.get()->insert({"EMAIL", "(\\w+)(\\.|_)?(\\w*)@(\\w+)(\\.(\\w+))+"});
+	_regexList.get()->insert({"PHONE","0647005996"});
+	_regexList.get()->insert({"IP", "(\\d{1,3}(\\.\\d{1,3}){3})"});
 }
 
-Plazza::data_t::data_t()
+Plazza::~Plazza()
+{}
+
+Plazza::DataProc::DataProc(std::string name, size_t threadMax)
+	:_name(name),_slave(name, threadMax), _input("." + _name), _output("." + _name + "R")
 {
-	_name = std::rand() % 1000;
-	_slave = Process(_name);
-	_input = Transport("." + _name);
-	_output = Transport("." + _name + "R");
 }
 
 void	Plazza::buildNewProcess()
 {
-
-	_info.push_back(data_t());
+	DataProc tmp (std::to_string(std::rand() % 1000), _threadMax);
+	_info.push_back(std::make_unique<DataProc>(std::to_string(std::rand() % 1000), _threadMax));
+	//DataProc tmp("coucou", 12);
+	//_info.push_back(tmp);
+	//_info.push_back(tmp);
+	//DataProc tmp (std::to_string(std::rand() % 1000), _threadMax);
+	//_info.push_back(DataProc(std::to_string(std::rand() % 1000), _threadMax));
+	//_info.emplace_back(std::to_string(std::rand() % 1000), _threadMax);
 }
 
 std::shared_ptr<std::map<std::string, std::string>>	Plazza::getRegexList()
@@ -44,20 +47,13 @@ std::shared_ptr<std::map<std::string, std::string>>	Plazza::getRegexList()
 
 void	Plazza::sendToProcess()
 {
-	size_t i = -1;
-	size_t	target;
-	std::string	tmp;
-
-	for(size_t nb = 0; nb < _info.size(); nb++)
+	for (auto &it: _info)
 	{
-		target = stoi(_info[i]._infos["threadLeft"]);
-		for (size_t el = 0; el < target; el++)
+		for (size_t nb = 0; nb < it.get()->_infos && _queu.get()->size() > 0; nb ++)
 		{
-			tmp += _queu.get()->begin()->first + "|" + _queu.get()->begin()->second;
+			it.get()->_output << "queu:" + _queu.get()->begin()->first + "," + _queu.get()->begin()->first + "\n";
 			_queu.get()->erase(_queu.get()->begin());
 		}
-		if (tmp.size())
-			_info[nb]._output << ("queu:" + tmp);
 	}
 }
 
@@ -65,43 +61,66 @@ void	Plazza::manager()
 {
 	for (size_t i = 0; i < _queu.get()->size(); i++)
 	{
-		if (_queu.get()->size > 0)
+		if (_queu.get()->size() > 0)
+		{
 			buildNewProcess();
-		sendToProcess();
+			update();
+			sendToProcess();
+		}
 		update();
 	}
 }
 
-void	Plazza::updateData(size_t nb, std::map<std::string, std::string> dataMap)
+std::vector<std::string>	Plazza::cutString(std::string str)
 {
-	for (auto el: dataMap)
-	{
-		if (_info[nb]._infos.find(el.first) != _info[nb]._infos.end())
-			_info[nb]._infos.at(el.first) = el.second;
-		else
-			_info[nb]._infos.insert(el);
-	}
+	std::vector<std::string> tmp;
+	std::string line;
+	size_t nb = 0;
+	for(; str[nb] != ':'; nb++)
+		line += str[nb];
+	tmp.push_back(line);
+	line.clear();
+	nb++;
+	for (; str[nb] != ','; nb++)
+		line += str[nb];
+	tmp.push_back(line);
+	line.clear();
+	nb++;
+	for (; str[nb] != '\n' && nb < str.size(); nb++)
+		line += str[nb];
+	tmp.push_back(line);
+	return tmp;
+}
+
+void	Plazza::updateData(size_t nb, std::string info)
+{
+	std::vector<std::string> tmp = cutString(info);
+	if (tmp[0] == "info")
+		_info[nb].get()->_infos = stoi(tmp[2]);
+	else if (tmp[0] == "result")
+		_result.get()->push_back(tmp[1] + " " + tmp[2]);
 }
 
 void	Plazza::update()
 {
-	size_t	nb = 0;
+	
 	std::map<std::string, std::string> dataMap;
-	for (; nb < _info.size(); nb++)
+	for (size_t nb = 0; nb < _info.size(); nb++)
 	{
-		_info[nb]._input << "update: ";
-		dataMap << _info[nb]._output;
-		updateData(nb, dataMap);
+		_info[nb].get()->_output << "update:\n";
+		std::string tmp = "c";
+		while (tmp != "")
+		{
+			tmp << _info[nb].get()->_input;
+			updateData(nb, tmp);
+		}
 	}
 }
 
 int	Plazza::start()
 {
-	Parse tmp (_regexList, _queu);
 	while(_exit_status)
 	{
-		tmp.read();
-		update();
 		manager();
 	}
 	return 0;

@@ -7,35 +7,37 @@
 
 #include <vector>
 #include <string>
+#include <memory>
+#include <mutex>
+#include <thread>
+#include <iostream>
 
 #ifndef THREADPOOL_HPP_
 	#define THREADPOOL_HPP_
 
-class	Threadpool{
+class	Threadpool {
 public:
-	Threadpool();
+	Threadpool(size_t threadMax); //construit tout les treads
 	~Threadpool();
-	void	setQueu(std::shared_ptr<std::vector<std::pair<std::string, std::string>>> _queu);
-	void	work();
-private:
-void    getRegex(toTransfert &data)
-{
-	std::regex	toFind(data.request);
-	std::string	lines;
-	std::string	tmp;
-	std::smatch	m;
-	std::ifstream myfile	(data.file);
-	if (!myfile)
-		return ;
-	while (getline(myfile, tmp))
-		lines += tmp;
-	myfile.close();
-	while (std::regex_search (lines, m, toFind)) {
-		data.flux << m[0];
-        	lines = m.suffix().str();
-	}
-	std::this_thread::yield();
-}
+	size_t	getInfo();
+	std::vector <std::string> getResult();
+	void	addCommande(std::pair<std::string, std::string> order);
+	
+protected:
+	void	couille(size_t nb);
+	std::string	getRegex(size_t id);
+	void	setID(size_t id, bool data);
+	size_t	_threadMax;
+	bool	_exit;
+	std::mutex	_lockQueu;
+	std::mutex	_lockInfo;
+	std::mutex	_lockExit;
+	std::mutex	_lockResult;
+	std::vector<std::string> _result;
+	std::vector<bool>	_threadStatus;
+	std::vector<std::thread>	_threads;
+	std::vector<std::pair<std::string, std::string>> _queu;
+
 };
 
 #endif /* !THREADPOOL_HPP_ */

@@ -16,28 +16,15 @@
 #include <memory>
 #include <regex>
 #include <map>
-#include "plazza.hpp"
 #include "transport.hpp"
 #include "threadpool.hpp"
 
 class Process {
 public:
-	Process();
-	Process(std::string sockerName);
-	Process(const Process &other);
-	Process	&operator=(const Process &other);
+	Process(std::string sockerName, size_t threadMax);
 	~Process();
 	void	start();
 	void	newTask(std::pair<std::string, std::string> order);
-	class toTransfert{
-	public:
-		toTransfert();
-		~toTransfert();
-		Transport	flux;
-		std::string	file;
-		std::string	request;
-		std::shared_ptr<bool>	ptr;
-	};
 
 private:
 	size_t	getPid();
@@ -46,18 +33,18 @@ private:
 	void	createNewTask();
 	void	order_support();
 	void	buildNewProcess();
-	void	communication_support();
-	static void	getRegex(toTransfert &data);
+	void	sendInformation();
 	clock_t	_end;
 	pid_t	_pid;
 	clock_t	_start;
 	size_t	_threadMax;
 	bool	_exit_status;
+	std::string _sockerName;
 	Threadpool	_pool;
 	Transport	_input;
 	Transport	_output;
-	std::shared_ptr<std::vector<std::pair<std::string, std::string>>>	_queu;
-	std::shared_ptr<std::vector<std::pair<std::pair<std::string, std::string>, std::string>>> _result //file, regex, result
+	std::vector<std::pair<std::string, std::string>>	_queu;
+	std::vector<std::string> _result; //file, result
 	
 };
 
