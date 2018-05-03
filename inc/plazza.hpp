@@ -22,28 +22,36 @@
 #include <memory>
 #include <ctime>
 #include <map>
-
-class Process;
-class Transport;
+#include "transport.hpp"
+#include "process.hpp"
+#include <sstream>
 
 class Plazza {
+public:
+	Plazza(char *str); 
+	~Plazza();
+	int start();
+	class data_t {
 	public:
-		Plazza();
-		Plazza(char *str); 
-		~Plazza();
-		int start();
-	protected:
-		std::shared_ptr<std::map<std::string, std::string>>	_regexList; //first name, second regex
-		size_t	_threadMax;
-	private:
-		void	update();
-		void	manager();
-		bool	_exit_status;
-		std::shared_ptr<std::vector<std::pair<std::string, std::string>>> _queu;
-		std::vector<std::map<std::string, std::string>> _tabData;
-		std::vector<std::pair<Transport, Transport>> _tabSocket;
-		std::vector<Process>	_tabProcesses;
-
+		data_t();
+		std::string	_name;
+		Transport	_input;
+		Transport	_output;
+		Process		_slave;
+		std::map<std::string, std::string>	_infos;
+	};
+private:
+	void	update();
+	void	manager();
+	void	sendToProcess();
+	void	buildNewProcess();
+	void	updateData(size_t nb, std::map<std::string, std::string> dataMap);
+	size_t	_threadMax;
+	bool	_exit_status;
+	std::vector<Plazza::data_t> _info;
+	std::shared_ptr<std::vector<std::string>> _result;
+	std::shared_ptr<std::map<std::string, std::string>>	_regexList; //first name, second regex
+	std::shared_ptr<std::vector<std::pair<std::string, std::string>>> _queu;
 };
 
 #include "process.hpp"

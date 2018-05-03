@@ -18,9 +18,11 @@
 #include "plazza.hpp"
 #include "transport.hpp"
 
-class Process : private Plazza {
+class Process {
 public:
 	Process(std::string sockerName);
+	Process(const Process &other);
+	Process	&operator=(const Process &other);
 	~Process();
 	void	start();
 	void	newTask(std::pair<std::string, std::string> order);
@@ -34,8 +36,8 @@ public:
 		std::shared_ptr<bool>	ptr;
 		std::vector<std::string>	result;
 	};
+
 private:
-	
 	size_t	getPid();
 	void	checkThread();
 	void	createNewTask();
@@ -43,18 +45,18 @@ private:
 	void	buildNewProcess();
 	void	communication_support();
 	static void	getRegex(toTransfert &data);
-	pid_t	_pid;
-	bool	_exit_status;
-
-	clock_t	_start;
 	clock_t	_end;
+	pid_t	_pid;
+	clock_t	_start;
+	size_t	_threadMax;
+	bool	_exit_status;
 	Transport	_input;
 	Transport	_output;
 	size_t	_availableThread;
 	std::thread	order_thrd;
 	std::thread	communication_thrd;
-	std::vector<std::pair<std::string, std::string>>	_queu;
 	std::vector<std::pair<std::thread, toTransfert>> _threads;
+	std::vector<std::pair<std::string, std::string>>	_queu;
 };
 
 #endif /* !PROCESS_HPP_ */

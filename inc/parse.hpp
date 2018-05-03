@@ -14,11 +14,10 @@
 #include <iostream>
 #include <algorithm>
 
-class Parse : public Plazza {
+class Parse {
 	public:
 		Parse(std::shared_ptr<std::map<std::string, std::string>> regexList, std::shared_ptr<std::vector<std::pair<std::string, std::string>>> queue);
 		~Parse();
-
 		int read();
 	private:
 		std::shared_ptr<std::map<std::string, std::string>>	_regexList;

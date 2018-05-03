@@ -12,8 +12,31 @@ Process::Process(std::string socketName)
 	_pid = 0;
 	_exit_status = false;
 	_pid = fork();
-	Transport _input(socketName);
-	Transport _output(socketName + "R");
+	if (_pid == 0)
+	{
+		Transport _input("." + socketName);
+		Transport _output("." + socketName + "R");
+	}
+}
+
+Process::Process(const Process &other)
+{
+	*this = other;
+}
+
+Process	&Process::operator=(const Process &other)
+{
+	_end = other._end;
+	_pid = other._pid;
+	_start = other._start;
+	_threadMax = other._threadMax;
+	_exit_status = other._exit_status;
+	_input = other._input;
+	_output = other._output;
+	_availableThread = other._availableThread;
+	_threads = other._threads;
+	_queu = other._queu;
+	return *this;
 }
 
 Process::~Process()
