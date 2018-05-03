@@ -65,7 +65,7 @@ void	Parse::manage_commands(std::string line)
 	for (auto &command: commands) {
 		std::string type = split(command, ' ', std::count(command.begin(), command.end(), ' '));
 		try {
-			if (_regexList.get()->find(type) != _regexList.get()->end()) {
+			if (*_regexList.get()->find(type) != *_regexList.get()->end()) {
 				for (int i = 0; i != std::count(command.begin(), command.end(), ' '); i++) {
 					_queu.get()->push_back(std::pair<std::string, std::string>(split(command, ' ', i), type));
 				}
