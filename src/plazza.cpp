@@ -32,17 +32,18 @@ void	Plazza::buildNewProcess()
 {
 	DataProc tmp (std::to_string(std::rand() % 1000), _threadMax);
 	_info.push_back(std::make_unique<DataProc>(std::to_string(std::rand() % 1000), _threadMax));
-	//DataProc tmp("coucou", 12);
-	//_info.push_back(tmp);
-	//_info.push_back(tmp);
-	//DataProc tmp (std::to_string(std::rand() % 1000), _threadMax);
-	//_info.push_back(DataProc(std::to_string(std::rand() % 1000), _threadMax));
-	//_info.emplace_back(std::to_string(std::rand() % 1000), _threadMax);
 }
 
 std::shared_ptr<std::map<std::string, std::string>>	Plazza::getRegexList()
 {
 	return _regexList;
+}
+
+std::vector<std::string>	Plazza::getResult()
+{
+	std::vector<std::string> tmp = *_result.get();
+	_result.get()->clear();
+	return tmp;
 }
 
 void	Plazza::sendToProcess()
