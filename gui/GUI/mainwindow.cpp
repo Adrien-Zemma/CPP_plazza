@@ -6,6 +6,9 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    manager = new Plazza(QString::number(this->ui->slave->value()).toLatin1().data());
+    /*_queu = manager.getQueu();
+    _regexList = manager.getRegexList();*/
 }
 
 MainWindow::~MainWindow()
@@ -52,4 +55,13 @@ void MainWindow::on_valid_clicked()
     this->ui->list->addRow(regex);
     this->ui->list->addRow(del);
     connect(del, SIGNAL (clicked()), this, SLOT (on_click_delete()));
+}
+
+void MainWindow::on_START_clicked()
+{
+}
+
+void MainWindow::on_regex_clicked()
+{
+    form.show();
 }

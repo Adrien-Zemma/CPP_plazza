@@ -25,12 +25,22 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
         main.cpp \
         mainwindow.cpp  \
-        ../../src/*.cpp
+        ../../src/operateurOverload.cpp \
+        ../../src/parse.cpp \
+        ../../src/plazza.cpp    \
+        ../../src/process.cpp   \
+        ../../src/transport.cpp \
+        ../../src/threadpool.cpp  \
+    regexform.cpp
+
+SOURCES -= ../../src/main.cpp
 
 INCLUDEPATH += ../../inc/
 
 HEADERS += \
-        mainwindow.h
+        mainwindow.h \
+    regexform.h
 
 FORMS += \
-        mainwindow.ui
+        mainwindow.ui \
+    regexform.ui

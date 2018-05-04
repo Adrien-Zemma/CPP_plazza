@@ -15,7 +15,7 @@ CXX           = g++
 DEFINES       = -DQT_DEPRECATED_WARNINGS -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB
 CFLAGS        = -pipe -O2 -march=x86-64 -mtune=generic -O2 -pipe -fstack-protector-strong -fno-plt -Wall -W -D_REENTRANT -fPIC $(DEFINES)
 CXXFLAGS      = -pipe -O2 -march=x86-64 -mtune=generic -O2 -pipe -fstack-protector-strong -fno-plt -Wall -W -D_REENTRANT -fPIC $(DEFINES)
-INCPATH       = -I. -isystem /usr/include/qt -isystem /usr/include/qt/QtWidgets -isystem /usr/include/qt/QtGui -isystem /usr/include/qt/QtCore -I. -isystem /usr/include/libdrm -I. -I/usr/lib/qt/mkspecs/linux-g++
+INCPATH       = -I. -I../../inc -isystem /usr/include/qt -isystem /usr/include/qt/QtWidgets -isystem /usr/include/qt/QtGui -isystem /usr/include/qt/QtCore -I. -isystem /usr/include/libdrm -I. -I/usr/lib/qt/mkspecs/linux-g++
 QMAKE         = /bin/qmake
 DEL_FILE      = rm -f
 CHK_DIR_EXISTS= test -d
@@ -52,21 +52,25 @@ OBJECTS_DIR   = ./
 
 SOURCES       = main.cpp \
 		mainwindow.cpp \
-		../../src/main.cpp \
 		../../src/operateurOverload.cpp \
 		../../src/parse.cpp \
 		../../src/plazza.cpp \
 		../../src/process.cpp \
-		../../src/transport.cpp moc_mainwindow.cpp
+		../../src/transport.cpp \
+		../../src/threadpool.cpp \
+		regexform.cpp moc_mainwindow.cpp \
+		moc_regexform.cpp
 OBJECTS       = main.o \
 		mainwindow.o \
-		main.o \
 		operateurOverload.o \
 		parse.o \
 		plazza.o \
 		process.o \
 		transport.o \
-		moc_mainwindow.o
+		threadpool.o \
+		regexform.o \
+		moc_mainwindow.o \
+		moc_regexform.o
 DIST          = /usr/lib/qt/mkspecs/features/spec_pre.prf \
 		/usr/lib/qt/mkspecs/common/unix.conf \
 		/usr/lib/qt/mkspecs/common/linux.conf \
@@ -238,18 +242,15 @@ DIST          = /usr/lib/qt/mkspecs/features/spec_pre.prf \
 		/usr/lib/qt/mkspecs/features/yacc.prf \
 		/usr/lib/qt/mkspecs/features/lex.prf \
 		GUI.pro mainwindow.h \
-		../../inc/operateur.hpp \
-		../../inc/parse.hpp \
-		../../inc/plazza.hpp \
-		../../inc/process.hpp \
-		../../inc/transport.hpp main.cpp \
+		regexform.h main.cpp \
 		mainwindow.cpp \
-		../../src/main.cpp \
 		../../src/operateurOverload.cpp \
 		../../src/parse.cpp \
 		../../src/plazza.cpp \
 		../../src/process.cpp \
-		../../src/transport.cpp
+		../../src/transport.cpp \
+		../../src/threadpool.cpp \
+		regexform.cpp
 QMAKE_TARGET  = GUI
 DESTDIR       = 
 TARGET        = GUI
@@ -258,7 +259,7 @@ TARGET        = GUI
 first: all
 ####### Build rules
 
-$(TARGET): ui_mainwindow.h $(OBJECTS)  
+$(TARGET): ui_mainwindow.h ui_regexform.h $(OBJECTS)  
 	$(LINK) $(LFLAGS) -o $(TARGET) $(OBJECTS) $(OBJCOMP) $(LIBS)
 
 Makefile: GUI.pro /usr/lib/qt/mkspecs/linux-g++/qmake.conf /usr/lib/qt/mkspecs/features/spec_pre.prf \
@@ -625,9 +626,9 @@ distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
 	$(COPY_FILE) --parents /usr/lib/qt/mkspecs/features/data/dummy.cpp $(DISTDIR)/
-	$(COPY_FILE) --parents mainwindow.h ../../inc/operateur.hpp ../../inc/parse.hpp ../../inc/plazza.hpp ../../inc/process.hpp ../../inc/transport.hpp $(DISTDIR)/
-	$(COPY_FILE) --parents main.cpp mainwindow.cpp ../../src/main.cpp ../../src/operateurOverload.cpp ../../src/parse.cpp ../../src/plazza.cpp ../../src/process.cpp ../../src/transport.cpp $(DISTDIR)/
-	$(COPY_FILE) --parents mainwindow.ui $(DISTDIR)/
+	$(COPY_FILE) --parents mainwindow.h regexform.h $(DISTDIR)/
+	$(COPY_FILE) --parents main.cpp mainwindow.cpp ../../src/operateurOverload.cpp ../../src/parse.cpp ../../src/plazza.cpp ../../src/process.cpp ../../src/transport.cpp ../../src/threadpool.cpp regexform.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents mainwindow.ui regexform.ui $(DISTDIR)/
 
 
 clean: compiler_clean 
@@ -658,24 +659,39 @@ compiler_moc_predefs_clean:
 moc_predefs.h: /usr/lib/qt/mkspecs/features/data/dummy.cpp
 	g++ -pipe -O2 -march=x86-64 -mtune=generic -O2 -pipe -fstack-protector-strong -fno-plt -Wall -W -dM -E -o moc_predefs.h /usr/lib/qt/mkspecs/features/data/dummy.cpp
 
-compiler_moc_header_make_all: moc_mainwindow.cpp
+compiler_moc_header_make_all: moc_mainwindow.cpp moc_regexform.cpp
 compiler_moc_header_clean:
-	-$(DEL_FILE) moc_mainwindow.cpp
-moc_mainwindow.cpp: mainwindow.h \
+	-$(DEL_FILE) moc_mainwindow.cpp moc_regexform.cpp
+moc_mainwindow.cpp: ../../inc/plazza.hpp \
+		../../inc/transport.hpp \
+		../../inc/operateur.hpp \
+		../../inc/process.hpp \
+		../../inc/threadpool.hpp \
+		regexform.h \
+		mainwindow.h \
 		moc_predefs.h \
 		/usr/bin/moc
-	/usr/bin/moc $(DEFINES) --include ./moc_predefs.h -I/usr/lib/qt/mkspecs/linux-g++ -I/home/hugo/Projects/epitech/CPP/cpp_plazza/gui/GUI -I/usr/include/qt -I/usr/include/qt/QtWidgets -I/usr/include/qt/QtGui -I/usr/include/qt/QtCore -I/usr/include/c++/7.3.1 -I/usr/include/c++/7.3.1/x86_64-pc-linux-gnu -I/usr/include/c++/7.3.1/backward -I/usr/lib/gcc/x86_64-pc-linux-gnu/7.3.1/include -I/usr/local/include -I/usr/lib/gcc/x86_64-pc-linux-gnu/7.3.1/include-fixed -I/usr/include mainwindow.h -o moc_mainwindow.cpp
+	/usr/bin/moc $(DEFINES) --include ./moc_predefs.h -I/usr/lib/qt/mkspecs/linux-g++ -I/home/hugo/Projects/epitech/CPP/cpp_plazza/gui/GUI -I/home/hugo/Projects/epitech/CPP/cpp_plazza/inc -I/usr/include/qt -I/usr/include/qt/QtWidgets -I/usr/include/qt/QtGui -I/usr/include/qt/QtCore -I/usr/include/c++/7.3.1 -I/usr/include/c++/7.3.1/x86_64-pc-linux-gnu -I/usr/include/c++/7.3.1/backward -I/usr/lib/gcc/x86_64-pc-linux-gnu/7.3.1/include -I/usr/local/include -I/usr/lib/gcc/x86_64-pc-linux-gnu/7.3.1/include-fixed -I/usr/include mainwindow.h -o moc_mainwindow.cpp
+
+moc_regexform.cpp: regexform.h \
+		moc_predefs.h \
+		/usr/bin/moc
+	/usr/bin/moc $(DEFINES) --include ./moc_predefs.h -I/usr/lib/qt/mkspecs/linux-g++ -I/home/hugo/Projects/epitech/CPP/cpp_plazza/gui/GUI -I/home/hugo/Projects/epitech/CPP/cpp_plazza/inc -I/usr/include/qt -I/usr/include/qt/QtWidgets -I/usr/include/qt/QtGui -I/usr/include/qt/QtCore -I/usr/include/c++/7.3.1 -I/usr/include/c++/7.3.1/x86_64-pc-linux-gnu -I/usr/include/c++/7.3.1/backward -I/usr/lib/gcc/x86_64-pc-linux-gnu/7.3.1/include -I/usr/local/include -I/usr/lib/gcc/x86_64-pc-linux-gnu/7.3.1/include-fixed -I/usr/include regexform.h -o moc_regexform.cpp
 
 compiler_moc_objc_header_make_all:
 compiler_moc_objc_header_clean:
 compiler_moc_source_make_all:
 compiler_moc_source_clean:
-compiler_uic_make_all: ui_mainwindow.h
+compiler_uic_make_all: ui_mainwindow.h ui_regexform.h
 compiler_uic_clean:
-	-$(DEL_FILE) ui_mainwindow.h
+	-$(DEL_FILE) ui_mainwindow.h ui_regexform.h
 ui_mainwindow.h: mainwindow.ui \
 		/usr/bin/uic
 	/usr/bin/uic mainwindow.ui -o ui_mainwindow.h
+
+ui_regexform.h: regexform.ui \
+		/usr/bin/uic
+	/usr/bin/uic regexform.ui -o ui_regexform.h
 
 compiler_yacc_decl_make_all:
 compiler_yacc_decl_clean:
@@ -687,36 +703,67 @@ compiler_clean: compiler_moc_predefs_clean compiler_moc_header_clean compiler_ui
 
 ####### Compile
 
-main.o: main.cpp mainwindow.h
+main.o: main.cpp mainwindow.h \
+		../../inc/plazza.hpp \
+		../../inc/transport.hpp \
+		../../inc/operateur.hpp \
+		../../inc/process.hpp \
+		../../inc/threadpool.hpp \
+		regexform.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o main.o main.cpp
 
 mainwindow.o: mainwindow.cpp mainwindow.h \
+		../../inc/plazza.hpp \
+		../../inc/transport.hpp \
+		../../inc/operateur.hpp \
+		../../inc/process.hpp \
+		../../inc/threadpool.hpp \
+		regexform.h \
 		ui_mainwindow.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o mainwindow.o mainwindow.cpp
 
-main.o: ../../src/main.cpp 
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o main.o ../../src/main.cpp
-
-operateurOverload.o: ../../src/operateurOverload.cpp 
+operateurOverload.o: ../../src/operateurOverload.cpp ../../inc/transport.hpp \
+		../../inc/operateur.hpp
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o operateurOverload.o ../../src/operateurOverload.cpp
 
-parse.o: ../../src/parse.cpp 
+parse.o: ../../src/parse.cpp ../../inc/parse.hpp \
+		../../inc/plazza.hpp \
+		../../inc/transport.hpp \
+		../../inc/operateur.hpp \
+		../../inc/process.hpp \
+		../../inc/threadpool.hpp
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o parse.o ../../src/parse.cpp
 
-plazza.o: ../../src/plazza.cpp 
+plazza.o: ../../src/plazza.cpp ../../inc/plazza.hpp \
+		../../inc/transport.hpp \
+		../../inc/operateur.hpp \
+		../../inc/process.hpp \
+		../../inc/threadpool.hpp \
+		../../inc/parse.hpp
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o plazza.o ../../src/plazza.cpp
 
 process.o: ../../src/process.cpp ../../inc/process.hpp \
-		../../inc/plazza.hpp \
 		../../inc/transport.hpp \
-		../../inc/operateur.hpp
+		../../inc/operateur.hpp \
+		../../inc/threadpool.hpp
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o process.o ../../src/process.cpp
 
-transport.o: ../../src/transport.cpp 
+transport.o: ../../src/transport.cpp ../../inc/transport.hpp \
+		../../inc/operateur.hpp
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o transport.o ../../src/transport.cpp
+
+threadpool.o: ../../src/threadpool.cpp ../../inc/threadpool.hpp
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o threadpool.o ../../src/threadpool.cpp
+
+regexform.o: regexform.cpp regexform.h \
+		ui_regexform.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o regexform.o regexform.cpp
 
 moc_mainwindow.o: moc_mainwindow.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_mainwindow.o moc_mainwindow.cpp
+
+moc_regexform.o: moc_regexform.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_regexform.o moc_regexform.cpp
 
 ####### Install
 
