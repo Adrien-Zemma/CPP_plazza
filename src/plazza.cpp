@@ -7,6 +7,7 @@
 
 #include "plazza.hpp"
 #include "parse.hpp"
+#include <stdio.h>
 
 Plazza::Plazza(char *str)
 {
@@ -24,14 +25,24 @@ Plazza::~Plazza()
 {}
 
 Plazza::DataProc::DataProc(std::string name, size_t threadMax)
-	:_name(name),_slave(name, threadMax), _input("." + _name, 2), _output("." + _name + "R")
+	:_name(name),_slave(name, threadMax), _input(".S" + name, 1), _output(".S" + name + "R")
 {
+	_infos = 0;
+	if (_slave.getPid() == 0)
+			_slave.start();
+	std::cerr << name << std::endl;
 }
 
 void	Plazza::buildNewProcess()
 {
-	//DataProc tmp (std::to_string(std::rand() % 1000), _threadMax);
-	_info.push_back(std::make_unique<DataProc>(std::to_string(std::rand() % 1000), _threadMax));
+	std::string	tmp;
+	tmp = std::to_string(std::rand() % 10000000);
+	if (access(tmp.data(), F_OK) == 0)
+	{
+		_info.push_back(std::make_unique<DataProc>(tmp, _threadMax));
+	}
+	else 
+		buildNewProcess();
 }
 
 std::shared_ptr<std::map<std::string, std::string>>	Plazza::getRegexList()
@@ -80,14 +91,14 @@ void	Plazza::manager()
 std::vector<std::string>	Plazza::cutString(std::string str)
 {
 	std::vector<std::string> tmp;
-	std::string line;
+	std::string line = "";
 	size_t nb = 0;
-	for(; str[nb] != ':'; nb++)
+	for(nb = 0; str[nb] != ':' && nb < str.size(); nb++)
 		line += str[nb];
 	tmp.push_back(line);
 	line.clear();
 	nb++;
-	for (; str[nb] != ','; nb++)
+	for (; str[nb] != ',' && nb < str.size(); nb++)
 		line += str[nb];
 	tmp.push_back(line);
 	line.clear();

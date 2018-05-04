@@ -25,9 +25,9 @@ public:
 	~Process();
 	void	start();
 	void	newTask(std::pair<std::string, std::string> order);
+	size_t	getPid();
 
 private:
-	size_t	getPid();
 	void	sendResult();
 	void	checkThread();
 	void	createNewTask();

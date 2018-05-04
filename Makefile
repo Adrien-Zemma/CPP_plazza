@@ -22,7 +22,7 @@ SRCS	= ./src/operateurOverload.cpp \
 OBJS	= $(SRCS:.cpp=.o)
 
 CXXFLAGS = -I ./inc
-CXXFLAGS += -Wall -Wextra -pthread -std=c++14
+CXXFLAGS += -Wall -Wextra -pthread -std=c++14 -g3
 LDLIBS = -lpthread
 LDFLAGS = 
 

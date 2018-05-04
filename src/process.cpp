@@ -17,8 +17,8 @@ Process::Process(std::string socketName, size_t threadMax)
 	_pid = fork();
 	if (_pid == 0)
 	{
-		Transport _input("." + socketName);
-		Transport _output("." + socketName + "R");
+		Transport _output(".S" + socketName);
+		Transport _input(".S" + socketName + "R", 1);
 	}
 }
 
@@ -42,7 +42,6 @@ void	Process::sendResult()
 		for (auto el: tab)
 			tmp += el + "\n";
 		_output << tmp;
-
 	}
 }
 

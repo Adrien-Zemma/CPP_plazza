@@ -14,9 +14,9 @@ int	main(int ac, char **av)
 	{
 		Plazza obj(av[1]);
 		Parse tmp(obj.getRegexList(), obj.getQueu());
+		tmp.read();
 		while(1)
 		{
-			tmp.read();
 			obj.manager();
 			auto tab = obj.getResult();
 			for (auto &it: tab)

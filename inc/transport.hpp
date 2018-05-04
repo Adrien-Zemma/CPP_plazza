@@ -33,8 +33,8 @@ public:
 	void	send(std::string);
 	std::string	reading();
 private:
-	int	fd;
-	std::shared_ptr<std::map<int, std::pair<size_t, size_t>>>	fdTab;
+	int	_fd;
+	struct sockaddr_un addr;
 };
 
 #include "operateur.hpp"
