@@ -30,7 +30,6 @@ Plazza::DataProc::DataProc(std::string name, size_t threadMax)
 	_infos = 0;
 	if (_slave.getPid() == 0)
 			_slave.start();
-	std::cerr << name << std::endl;
 }
 
 void	Plazza::buildNewProcess()
