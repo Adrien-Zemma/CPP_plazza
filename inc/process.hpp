@@ -28,12 +28,15 @@ public:
 	size_t	getPid();
 
 private:
+
+	void	updateQueu();
 	void	sendResult();
 	void	checkThread();
 	void	createNewTask();
 	void	order_support();
 	void	buildNewProcess();
 	void	sendInformation();
+	std::vector<std::string>	cutString(std::string str);
 	clock_t	_end;
 	pid_t	_pid;
 	clock_t	_start;

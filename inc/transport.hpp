@@ -34,6 +34,7 @@ public:
 	std::string	reading();
 private:
 	int	_fd;
+	int	_save;
 	struct sockaddr_un addr;
 };
 

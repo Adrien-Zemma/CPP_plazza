@@ -12,6 +12,7 @@
 
 Threadpool::Threadpool(size_t nb)
 {
+	std::cerr<< "threadpool\tbuild"<< std::endl;
 	_threadMax = nb;
 	for (size_t i; i < nb; i++)
 		_threadStatus.push_back(true);
@@ -21,6 +22,7 @@ Threadpool::Threadpool(size_t nb)
 
 Threadpool::~Threadpool()
 {
+	std::cerr<< "threadpool\tdestroy"<< std::endl;
 	_exit = true;
 	for (size_t i; i < _threadMax; i++)
 		_threads[i].join();
@@ -28,6 +30,7 @@ Threadpool::~Threadpool()
 
 void	Threadpool::addCommande(std::pair<std::string, std::string> order)
 {
+	std::cerr<< "threadpool\tcommande add" << std::endl;
 	_lockQueu.lock();
 	_queu.push_back(order);
 	_lockQueu.unlock();
@@ -35,6 +38,7 @@ void	Threadpool::addCommande(std::pair<std::string, std::string> order)
 
 std::vector <std::string> Threadpool::getResult()
 {
+	std::cerr<< "threadpool\result send" << std::endl;
 	std::vector <std::string> tmp;
 	_lockResult.lock();
 	tmp = _result;
@@ -96,10 +100,12 @@ void	Threadpool::couille(size_t nb)
 		_lockExit.unlock();
 		if (_lockQueu.try_lock())
 		{
+			std::cerr<< "threadpool\ti'm on it\t"<< nb << std::endl;
 			auto tmp = getRegex(id);
 			_lockResult.lock();
 			_result.push_back(tmp);
 			_lockResult.unlock();
+			std::cerr<< "threadpool\tfinish\t"<< nb << std::endl;
 		}
 		if (exitStatus)
 			return ;

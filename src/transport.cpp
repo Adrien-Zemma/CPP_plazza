@@ -21,6 +21,8 @@ Transport::Transport(std::string socketFile)
 	while (access(socketFile.data(), F_OK) != 0);
 	if (connect(_fd, (struct sockaddr*)&addr, sizeof(addr)) == -1)
 		perror("connect error");
+	_save = _fd;
+	std::cerr<< "connect\t" << _fd << std::endl;
 }
 
 Transport::Transport(std::string socketFile, int nbclient)
@@ -32,6 +34,7 @@ Transport::Transport(std::string socketFile, int nbclient)
 	bind(_fd, (struct sockaddr*)&addr, sizeof(addr));
 	listen(_fd, nbclient);
 	_fd = accept(_fd, NULL, NULL);
+	std::cerr<< "accept\t" << _fd << std::endl;
 }
 
 Transport::~Transport()
@@ -40,7 +43,7 @@ Transport::~Transport()
 void	Transport::send(std::string txt)
 {
 	int rc;
-	std::cerr << "send:" << txt + "|" << _fd << "|" << std::endl;
+	std::cerr<< "send\t" << _fd << "\t" << txt << std::endl;
 	rc = write(_fd, txt.data(), txt.size());
 	if (rc == -1) {
 		perror("write error");
@@ -56,7 +59,7 @@ std::string	Transport::reading()
 		tmp += buf[0];
 		if (buf[0] == '\n')
 		{
-			std::cerr << "read:" << tmp << std::endl;
+			std::cerr<< "read\t" << _fd << "\t" << tmp << std::endl;
 			return tmp;
 		}
 	}
