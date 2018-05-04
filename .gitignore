@@ -1,3 +1,7 @@
 *.o
-.*
+.S*
 vgcore*
+test/*
+.vscode/*
+plazza
+log

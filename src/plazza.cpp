@@ -17,7 +17,7 @@ Plazza::Plazza(char *str)
 	_regexList = std::make_shared<std::map<std::string, std::string>>();
 	_queu = std::make_shared<std::vector<std::pair<std::string, std::string>>>();
 	_regexList.get()->insert({"EMAIL", "(\\w+)(\\.|_)?(\\w*)@(\\w+)(\\.(\\w+))+"});
-	_regexList.get()->insert({"PHONE","0647005996"});
+	_regexList.get()->insert({"PHONE", "0647005996"});
 	_regexList.get()->insert({"IP", "(\\d{1,3}(\\.\\d{1,3}){3})"});
 }
 
@@ -36,12 +36,12 @@ void	Plazza::buildNewProcess()
 {
 	std::string	tmp;
 	tmp = std::to_string(std::rand() % 10000000);
-	if (access(tmp.data(), F_OK) == 0)
+	//if (access(tmp.c_str(), F_OK) == 0)
 	{
 		_info.push_back(std::make_unique<DataProc>(tmp, _threadMax));
 	}
-	else 
-		buildNewProcess();
+	/*else 
+		buildNewProcess();*/
 }
 
 std::shared_ptr<std::map<std::string, std::string>>	Plazza::getRegexList()
@@ -79,7 +79,9 @@ void	Plazza::manager()
 	{
 		if (_queu.get()->size() > 0)
 		{
+			std::cout << "22222222222222222222" << std::endl;
 			buildNewProcess();
+			std::cout << "~~~~~~~~~~~~~~~~~~~~~" << std::endl;
 			update();
 			sendToProcess();
 		}
