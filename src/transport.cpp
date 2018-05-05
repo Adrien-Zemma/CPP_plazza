@@ -16,10 +16,10 @@ Transport::Transport(std::string socketFile)
 	_fd = socket(AF_INET, SOCK_STREAM, pe->p_proto);
 	if (_fd == -1) 
 		perror("client socket error");
+	//bzero(&addr, sizeof(addr));
 	addr.sin_family = AF_UNIX;
 	addr.sin_port = htons(stoi(socketFile));
 	addr.sin_addr.s_addr = inet_addr("127.0.0.1");
-	bzero(&addr, sizeof(addr));
 	if (connect(_fd, (struct sockaddr*)&addr, sizeof(addr)) == -1)
 		perror("connect error");
 	_save = _fd;
@@ -33,10 +33,9 @@ Transport::Transport(std::string socketFile, int nbclient)
 	if (_fd == -1)
 		perror("socket");
 	std::cerr << "socket: fd \t" << _fd <<std::endl;
-	bzero(&addr, sizeof(addr));
 	addr.sin_family = AF_UNIX;
 	addr.sin_port = htons(stoi(socketFile));
-	addr.sin_addr.s_addr = INADDR_ANY;
+	addr.sin_addr.s_addr = inet_addr("127.0.0.1");
 	if (bind(_fd, (struct sockaddr*)&addr, sizeof(addr)) == -1)
 		perror("bind");
 	std::cerr << "socket: fd \t" << _fd <<std::endl;
