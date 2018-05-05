@@ -22,6 +22,10 @@
 #include <memory>
 #include <map>
 
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+
 class Transport
 {
 public:
@@ -35,7 +39,8 @@ public:
 private:
 	int	_fd;
 	int	_save;
-	struct sockaddr_un addr;
+	struct protoent *pe;
+	struct sockaddr_in addr;
 };
 
 #include "operateur.hpp"

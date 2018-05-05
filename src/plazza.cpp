@@ -26,24 +26,19 @@ Plazza::~Plazza()
 {}
 
 Plazza::DataProc::DataProc(std::string name, size_t threadMax)
-	:_name(name),_slave(name, threadMax), _input(".S" + name, 1), _output(".S" + name + "R")
+	:_name(name),_slave(name, threadMax), _input(name, 1), _output(name + "1")
 {
-	std::cerr << "PLAZZA\t" << "Building slave" << std::endl;
+	std::cerr << "PLAZZA\t" << "slave Build" << std::endl;
 	_infos = 0;
-	if (_slave.getPid() == 0)
-			_slave.start();
 }
 
 void	Plazza::buildNewProcess()
 {
 	std::string	tmp;
-	tmp = std::to_string(std::rand() % 10000000);
-	//if (access(tmp.c_str(), F_OK) == 0)
-	{
-		_info.push_back(std::make_unique<DataProc>(tmp, _threadMax));
-	}
-	/*else 
-		buildNewProcess();*/
+	tmp = std::to_string(std::rand() % 1000);
+	std::cerr << "PLAZZA\t" << "Building slave" << std::endl;
+	_info.push_back(std::make_unique<DataProc>(tmp, _threadMax));
+	std::cerr << "PLAZZA\t" << "apres l'unique pointer" << std::endl;
 }
 
 std::shared_ptr<std::map<std::string, std::string>>	Plazza::getRegexList()
@@ -85,6 +80,7 @@ void	Plazza::manager()
 			buildNewProcess();
 		if (_queu.get()->size() > 0)
 		{
+			std::cout << 1 << std::endl;
 			update();
 			sendToProcess();
 		}
@@ -130,13 +126,16 @@ void	Plazza::update()
 	{
 		std::cerr << "PLAZZA\t" << "updating slave "<< nb << std::endl;
 		_info[nb].get()->_output << "update:\n";
-		std::string tmp = "c";
-		while (tmp != "")
-		{
+		std::string tmp;
+		std::cout << 2 << std::endl;
+		do{
+			std::cout << 3 << std::endl;
 			tmp << _info[nb].get()->_input;
+			std::cout << 4 << std::endl;
 			updateData(nb, tmp);
-		}
+		}while (tmp != "");
 	}
+	
 }
 
 int	Plazza::start()

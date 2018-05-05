@@ -18,8 +18,12 @@ Process::Process(std::string socketName, size_t threadMax)
 	_pid = fork();
 	if (_pid == 0)
 	{
-		Transport _output(".S" + socketName);
-		Transport _input(".S" + socketName + "R", 1);
+		std::cerr << "child process :  building Transport" << std::endl;
+		Transport _output(socketName);
+		std::cerr << "child process :  building client Transport" << std::endl;
+		Transport _input(socketName + "1", 2);
+		std::cerr << "child process :  building server Transport" << std::endl;
+		start();
 	}
 }
 
@@ -82,10 +86,16 @@ void	Process::updateQueu()
 {
 	std::string	tmp = "C";
 	do {
+		std::cout << "penis" << std::endl;
 		tmp << _input;
 		auto tab = cutString(tmp);
-		if (tab[0] == "info")
+		std::cout << tab[0] + "|"+tab[1] + "|"+tab[2] + "|" << std::endl;
+		if (tab[0] == "update")
+		{
+			std::cout << 4 << std::endl;
 			sendInformation();
+
+		}
 		if (tab[0] == "queu")
 		{
 			std::cerr<< "process\t" << _sockerName << "\t" << "queu recive\t"<< tmp << std::endl;
