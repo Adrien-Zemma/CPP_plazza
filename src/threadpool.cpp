@@ -18,7 +18,7 @@ Threadpool::Threadpool(size_t nb)
 	for (size_t i = 0; i < nb; i++)
 		_threadStatus.push_back(true);
 	for (size_t i = 0; i < nb; i++)
-		_threads.push_back(std::thread([this](size_t i){couille(i);}, i));
+		_threads.push_back(std::thread([this](size_t i){threadWork(i);}, i));
 }
 
 Threadpool::~Threadpool()
@@ -60,13 +60,10 @@ size_t	Threadpool::getInfo()
 
 std::string	Threadpool::getRegex(size_t id)
 {
-	auto test = _queu.begin()->second;
-	auto test2 = _queu.begin()->first;
+	auto test = getFirstQueu();
 	setID(id, false);
-	std::regex	toFind(test);
-	std::string	file = test2;
-	_queu.erase(_queu.begin());
-	_lockQueu.unlock();
+	std::regex	toFind(test.first);
+	std::string	file = test.second;
 	std::string	returnValue;
 	std::string	lines;
 	std::string	tmp;
@@ -91,25 +88,43 @@ void	Threadpool::setID(size_t id, bool data)
 	_lockInfo.unlock();
 }
 
-void	Threadpool::couille(size_t nb)
+void	Threadpool::pushResult(std::string tmp)
+{
+	_lockResult.lock();
+	_result.push_back(tmp);
+	_lockResult.unlock();
+}
+
+std::pair<std::string, std::string>	Threadpool::getFirstQueu()
+{
+	std::pair<std::string, std::string>tmp = *_queu.begin();
+	_queu.erase(_queu.begin());
+	_lockQueu.unlock();
+	return tmp;
+}
+
+bool	Threadpool::getExit()
+{
+	_lockExit.lock();
+	auto exitStatus = _exit;
+	_lockExit.unlock();
+	return exitStatus;
+}
+
+void	Threadpool::threadWork(size_t nb)
 {
 	size_t	id = nb;
 	bool	exitStatus = false;
 	while(1)
 	{
 		setID(id, true);
-		_lockExit.lock();
-		exitStatus = _exit;
-		_lockExit.unlock();
+		exitStatus = getExit();
 		if (_lockQueu.try_lock())
 		{
 			if (_queu.size() > 0)
 			{
-				std::cerr<< "threadpool\ti'm on it\t"<< nb << std::endl;
-				auto tmp = getRegex(id);
-				_lockResult.lock();
-				_result.push_back(tmp);
-				_lockResult.unlock();
+				std::cerr << "threadpool\ti'm on it\t"<< nb << std::endl;
+				pushResult(getRegex(id));
 				std::cerr<< "threadpool\tfinish\t"<< nb << std::endl;
 			}
 			else

@@ -24,9 +24,13 @@ public:
 	void	addCommande(std::pair<std::string, std::string> order);
 	
 protected:
-	void	couille(size_t nb);
+
+	bool	getExit();
+	void	threadWork(size_t nb);
 	std::string	getRegex(size_t id);
 	void	setID(size_t id, bool data);
+	void	pushResult(std::string tmp);
+	std::pair<std::string, std::string>	getFirstQueu();
 	size_t	_threadMax;
 	bool	_exit;
 	std::mutex	_lockQueu;
