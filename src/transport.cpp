@@ -12,6 +12,7 @@ Transport::Transport()
 
 Transport::Transport(std::string socketFile)
 {
+	int tmp;
 	pe = getprotobyname("TCP");
 	_fd = socket(AF_INET, SOCK_STREAM, pe->p_proto);
 	if (_fd == -1) 
@@ -19,8 +20,9 @@ Transport::Transport(std::string socketFile)
 	addr.sin_family = AF_INET;
 	addr.sin_port = htons(stoi(socketFile));
 	addr.sin_addr.s_addr = inet_addr("127.0.0.1");
-	if (connect(_fd, (struct sockaddr*)&addr, sizeof(addr)) == -1)
-		perror("client connect error");
+	do{
+		tmp = connect(_fd, (struct sockaddr*)&addr, sizeof(addr));
+	}while ( tmp!= 0);
 	_save = _fd;
 	std::cerr<< "client connect\t" << _fd << std::endl;
 }

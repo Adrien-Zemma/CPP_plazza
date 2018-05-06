@@ -18,6 +18,7 @@ int	main(int ac, char **av)
 		while(1)
 		{
 			obj.manager();
+			std::cout << "SALUT" << std::endl;
 			auto tab = obj.getResult();
 			for (auto &it: tab)
 				std::cout << it << std::endl;
