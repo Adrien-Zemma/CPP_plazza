@@ -86,7 +86,6 @@ void	Process::updateQueu()
 {
 	std::string	tmp = "C";
 	do {
-		std::cout << "penis" << std::endl;
 		tmp << _input;
 		auto tab = cutString(tmp);
 		std::cout << tab[0] + "|"+tab[1] + "|"+tab[2] + "|" << std::endl;

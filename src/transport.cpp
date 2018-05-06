@@ -20,7 +20,7 @@ Transport::Transport(std::string socketFile)
 	addr.sin_port = htons(stoi(socketFile));
 	addr.sin_addr.s_addr = inet_addr("127.0.0.1");
 	if (connect(_fd, (struct sockaddr*)&addr, sizeof(addr)) == -1)
-		perror("connect error");
+		perror("client connect error");
 	_save = _fd;
 	std::cerr<< "client connect\t" << _fd << std::endl;
 }
