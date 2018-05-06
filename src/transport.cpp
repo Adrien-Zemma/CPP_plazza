@@ -34,7 +34,7 @@ Transport::Transport(std::string socketFile, int nbclient)
 	std::cerr << "socket: fd \t" << _fd <<std::endl;
 	addr.sin_family = AF_INET;
 	addr.sin_port = htons(stoi(socketFile));
-	addr.sin_addr.s_addr = ntohs(INADDR_ANY);
+	addr.sin_addr.s_addr = (INADDR_ANY);
 	if (bind(_fd, (struct sockaddr*)&addr, sizeof(addr)) == -1)
 		perror("bind");
 	std::cerr << "socket: fd \t" << _fd <<std::endl;

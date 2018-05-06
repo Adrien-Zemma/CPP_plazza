@@ -32,6 +32,16 @@ Plazza::DataProc::DataProc(std::string name, size_t threadMax)
 	_infos = 0;
 }
 
+std::vector<std::string>	Plazza::getInfoProcess()
+{
+	std::vector<std::string> tmp; 
+	for (auto &el: _info)
+	{
+		tmp.push_back(std::to_string(el.get()->_infos));
+	}
+	return tmp;
+}
+
 void	Plazza::buildNewProcess()
 {
 	std::string	tmp;

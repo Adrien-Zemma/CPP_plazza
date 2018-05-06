@@ -55,6 +55,7 @@ private:
 	void	update();
 	void	sendToProcess();
 	void	buildNewProcess();
+	std::vector<std::string>	getInfoProcess();
 	std::vector<std::string>	cutString(std::string str);
 	void	updateData(size_t nb, std::string info);
 	size_t	_threadMax;
