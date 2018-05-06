@@ -10,7 +10,6 @@
 Process::Process(std::string socketName, size_t threadMax)
 	:_pool(threadMax)
 {
-	std::cerr<< "process\tbuild\t" << socketName << "\t" << std::endl;
 	_threadMax = threadMax;
 	_pid = 0;
 	_exit_status = false;
@@ -51,7 +50,6 @@ void	Process::sendResult()
 void	Process::sendInformation()
 {
 	auto nb = _pool.getInfo();
-	std::cerr<< "process\t" << _sockerName << "\t" << "send info\t"<< nb << std::endl;
 	std::string tmp = "info:";
 	tmp += _sockerName + "," + std::to_string(nb) + "\n";
 	_output << tmp;
@@ -82,20 +80,15 @@ void	Process::updateQueu()
 {
 	std::string	tmp = "C";
 	do {
-		std::cout << "ce truc c'est le read du process" << std::endl;
 		tmp << _input;
-		std::cout << "la on est apres le read" << std::endl;
 		auto tab = cutString(tmp);
-		std::cout << tab[0] + "|"+tab[1] + "|"+tab[2] + "|" << std::endl;
 		if (tab[0] == "update")
 		{
-			std::cout << 4 << std::endl;
 			sendInformation();
 
 		}
 		if (tab[0] == "queu")
 		{
-			std::cerr<< "process\t" << _sockerName << "\t" << "queu recive\t"<< tmp << std::endl;
 			_queu.push_back({tab[1], tab[2]});
 		}
 	} while (tmp != "");
