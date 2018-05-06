@@ -13,7 +13,16 @@ int	main(int ac, char **av)
 	if (ac == 2)
 	{
 		Plazza obj(av[1]);
-		obj.start();
+		Parse tmp(obj.getRegexList(), obj.getQueu());
+		tmp.read();
+		while(1)
+		{
+			obj.manager();
+			std::cout << "SALUT" << std::endl;
+			auto tab = obj.getResult();
+			for (auto &it: tab)
+				std::cout << it << std::endl;
+		}
 		return 0;
 	}
 	return 84;

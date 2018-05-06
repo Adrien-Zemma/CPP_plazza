@@ -12,25 +12,42 @@ Transport::Transport()
 
 Transport::Transport(std::string socketFile)
 {
-	struct sockaddr_un addr;
-	fd = socket(AF_UNIX, SOCK_STREAM, 0);
-	memset(&addr, 0, sizeof(addr));
-	addr.sun_family = AF_UNIX;
-	strncpy(addr.sun_path, socketFile.data(), sizeof(addr.sun_path)-1);
-	connect(fd, (struct sockaddr*)&addr, sizeof(addr));
+	int tmp;
+	pe = getprotobyname("TCP");
+	_fd = socket(AF_INET, SOCK_STREAM, pe->p_proto);
+	if (_fd == -1) 
+		perror("client socket error");
+	addr.sin_family = AF_INET;
+	addr.sin_port = htons(stoi(socketFile));
+	addr.sin_addr.s_addr = inet_addr("127.0.0.1");
+	do{
+		tmp = connect(_fd, (struct sockaddr*)&addr, sizeof(addr));
+	}while ( tmp!= 0);
+	_save = _fd;
+	std::cerr<< "client connect\t" << _fd << std::endl;
 }
 
 Transport::Transport(std::string socketFile, int nbclient)
 {
-	struct sockaddr_un addr;
-	fd = socket(AF_UNIX, SOCK_STREAM, 0);
-	memset(&addr, 0, sizeof(addr));
-	addr.sun_family = AF_UNIX;
-	strncpy(addr.sun_path, socketFile.data(), sizeof(addr.sun_path)-1);
-	bind(fd, (struct sockaddr*)&addr, sizeof(addr));
-	listen(fd, nbclient);
-	fd = accept(fd, NULL, NULL);
-	
+	pe = getprotobyname("TCP");
+	_fd = socket(AF_INET, SOCK_STREAM, pe->p_proto);
+	if (_fd == -1)
+		perror("socket");
+	std::cerr << "socket: fd \t" << _fd <<std::endl;
+	addr.sin_family = AF_INET;
+	addr.sin_port = htons(stoi(socketFile));
+	addr.sin_addr.s_addr = (INADDR_ANY);
+	if (bind(_fd, (struct sockaddr*)&addr, sizeof(addr)) == -1)
+		perror("bind");
+	std::cerr << "socket: fd \t" << _fd <<std::endl;
+	if (listen(_fd, nbclient) == -1)
+		perror("listen");
+	std::cerr << "socket: fd \t" << _fd <<std::endl;
+	socklen_t tmp = sizeof(addr);
+	_fd = accept(_fd, (struct sockaddr *)&addr, &tmp);
+	if (_fd == -1)
+		perror("accept");
+	std::cerr<< "accept\t" << _fd << std::endl;
 }
 
 Transport::~Transport()
@@ -39,9 +56,9 @@ Transport::~Transport()
 void	Transport::send(std::string txt)
 {
 	int rc;
-	if (*txt.end() != '\n')
-		txt += '\n';
-	rc = write(fd, txt.data(), txt.size());
+	std::cout << "send" << std::endl;
+	std::cerr<< "send\t" << _fd << "\t" << txt << std::endl;
+	rc = write(_fd, txt.data(), txt.size());
 	if (rc == -1) {
 		perror("write error");
 	}
@@ -51,9 +68,16 @@ std::string	Transport::reading()
 {
 	char	buf[2];
 	std::string	tmp;
-	while (read(fd, buf, 1))
+	std::cout << "read" << std::endl;
+	while (read(_fd, buf, 1))
 	{
 		tmp += buf[0];
+		std::cerr<< "read\t" << _fd << "\t" << tmp << std::endl;
+		if (buf[0] == '\n')
+		{
+			return tmp;
+		}
 	}
+	std::cout << "read fini" << std::endl;
 	return tmp + '\n';
 }

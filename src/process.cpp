@@ -5,26 +5,29 @@
 ** process
 */
 
-#include "../inc/process.hpp"
+#include "process.hpp"
 
-Process::Process(std::string socketName)
+Process::Process(std::string socketName, size_t threadMax)
+	:_pool(threadMax)
 {
+	std::cerr<< "process\tbuild\t" << socketName << "\t" << std::endl;
+	_threadMax = threadMax;
 	_pid = 0;
 	_exit_status = false;
+	_sockerName = socketName;
 	_pid = fork();
-	Transport _input(socketName);
-	Transport _output(socketName + "R");
+	if (_pid == 0)
+	{
+		std::cerr << "child process :  building Transport" << std::endl;
+		Transport _output(socketName);
+		std::cerr << "child process :  building client Transport" << std::endl;
+		Transport _input(socketName + "1", 2);
+		std::cerr << "child process :  building server Transport" << std::endl;
+		start();
+	}
 }
 
 Process::~Process()
-{}
-
-Process::toTransfert::toTransfert()
-{
-	ptr = std::make_shared<bool>(false);
-}
-
-Process::toTransfert::~toTransfert()
 {}
 
 size_t	Process::getPid()
@@ -32,50 +35,73 @@ size_t	Process::getPid()
 	return _pid;
 }
 
-void	Process::communication_support()
+void	Process::sendResult()
 {
-	std::map<std::string, std::string> map;
-	_input >> map;
-	auto tmp = map["queu"];
-	std::string key;
-	std::string value;
-	for(size_t i = 0; i < tmp.size(); i++)
+	auto tab = _pool.getResult();
+	if (tab.size() > 0)
 	{
-		for (; tmp[i] != '|'; i++)
-			key.push_back(tmp[i]);
-		i++;
-		for (; tmp[i] != ',' && tmp[i] != '\n'; i++)
-			value.push_back(tmp[i]);
-		_queu.push_back({key, value});	
+		
+		std::cerr<< "process\t" << _sockerName << "\t" << "send result" << std::endl;
+		_start = clock();
+		_end = _start + (CLOCKS_PER_SEC * 5);
+		std::string tmp;
+		tmp = "result:";
+		for (auto el: tab)
+			tmp += el + "\n";
+		_output << tmp;
 	}
 }
 
-void	Process::createNewTask()
+void	Process::sendInformation()
 {
-	_start = clock();
-	_end = _start + (CLOCKS_PER_SEC * 5);
-
-	if (_threads.size() < _threadMax)
-	{
-		_threads.end()->second = toTransfert();
-		auto tmp = _threads.end()->second;
-		_threads.end()->first = std::thread(&Process::getRegex, std::ref(_threads.end()->second));
-	}
+	auto nb = _pool.getInfo();
+	std::cerr<< "process\t" << _sockerName << "\t" << "send info\t"<< nb << std::endl;
+	std::string tmp = "info:";
+	tmp += _sockerName + "," + std::to_string(nb) + "\n";
+	_output << tmp;
 }
 
-void	Process::checkThread()
+std::vector<std::string>	Process::cutString(std::string str)
 {
-	for (size_t i = 0; i < _threads.size(); i++){
-		if (*_threads.at(i).second.ptr.get() == true)
+	std::vector<std::string> tmp;
+	std::string line = "";
+	size_t nb = 0;
+	for(nb = 0; str[nb] != ':' && nb < str.size(); nb++)
+		line += str[nb];
+	tmp.push_back(line);
+	line.clear();
+	nb++;
+	for (; str[nb] != ',' && nb < str.size(); nb++)
+		line += str[nb];
+	tmp.push_back(line);
+	line.clear();
+	nb++;
+	for (; str[nb] != '\n' && nb < str.size(); nb++)
+		line += str[nb];
+	tmp.push_back(line);
+	return tmp;
+}
+
+void	Process::updateQueu()
+{
+	std::string	tmp = "C";
+	do {
+		tmp << _input;
+		auto tab = cutString(tmp);
+		std::cout << tab[0] + "|"+tab[1] + "|"+tab[2] + "|" << std::endl;
+		if (tab[0] == "update")
 		{
-			_threads.erase(_threads.begin() + i);
-			checkThread();
-		}
-	}
-}
+			std::cout << 4 << std::endl;
+			sendInformation();
 
-void	Process::order_support()
-{}
+		}
+		if (tab[0] == "queu")
+		{
+			std::cerr<< "process\t" << _sockerName << "\t" << "queu recive\t"<< tmp << std::endl;
+			_queu.push_back({tab[1], tab[2]});
+		}
+	} while (tmp != "");
+}
 
 void	Process::start()
 {
@@ -84,33 +110,13 @@ void	Process::start()
 
 	while(clock() <= _end)
 	{
-		communication_support();
-		if (_queu.size() > 0)
-			createNewTask();
-		checkThread();
+		updateQueu();
+		for (auto el: _queu)
+		{
+			_pool.addCommande(el);
+		}
+		_queu.clear();
+		sendResult();
 	}
-}
-
-void	Process::newTask(std::pair<std::string, std::string> order)
-{
-	order = order;
-}
-
-void    Process::getRegex(toTransfert &data)
-{
-	std::regex	toFind(data.request);
-	std::string	lines;
-	std::string	tmp;
-	std::smatch	m;
-	std::ifstream myfile	(data.file);
-	if (!myfile)
-		return ;
-	while (getline(myfile, tmp))
-		lines += tmp;
-	myfile.close();
-	while (std::regex_search (lines, m, toFind)) {
-		data.flux << m[0];
-        	lines = m.suffix().str();
-	}
-	std::this_thread::yield();
+	exit(0);
 }

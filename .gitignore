@@ -1,3 +1,8 @@
 *.o
-.vscode
+.S*
+vgcore*
+test/*
+.vscode/*
 plazza
+log
+BIN

@@ -8,7 +8,6 @@
 #include "parse.hpp"
 
 Parse::Parse(std::shared_ptr<std::map<std::string, std::string>> regexList, std::shared_ptr<std::vector<std::pair<std::string, std::string>>> queue)
- : Plazza()
 {
 	_regexList = regexList;
 	_queu = queue;
@@ -19,8 +18,9 @@ Parse::~Parse()
 
 int	Parse::read()
 {
-	for (std::string line; std::getline(std::cin, line);)
-		manage_commands(line);
+	std::string line;
+	std::getline(std::cin, line);
+	manage_commands(line);
 	return 0;
 }
 
@@ -66,10 +66,10 @@ void	Parse::manage_commands(std::string line)
 	for (auto &command: commands) {
 		std::string type = split(command, ' ', std::count(command.begin(), command.end(), ' '));
 		try {
-			if (_regexList.find(type) != _regexList.end()) {
-				for (int i = 0; i != std::count(command.begin(), command.end(), ' '); i++) {
-					_queu.get()->push_back(std::pair<std::string, std::string>(split(command, ' ', i), type));
-				}
+			//if (_regexList.get()->find(type) != _regexList.get()->end()) {
+			_regexList.get()->at(type);
+			for (int i = 0; i != std::count(command.begin(), command.end(), ' '); i++) {
+				_queu.get()->push_back(std::pair<std::string, std::string>(split(command, ' ', i), type));
 			}
   		}
 		catch (const std::out_of_range& oor) {
