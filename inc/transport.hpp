@@ -22,6 +22,10 @@
 #include <memory>
 #include <map>
 
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+
 class Transport
 {
 public:
@@ -34,7 +38,9 @@ public:
 	std::string	reading();
 private:
 	int	_fd;
-	struct sockaddr_un addr;
+	int	_save;
+	struct protoent *pe;
+	struct sockaddr_in addr;
 };
 
 #include "operateur.hpp"

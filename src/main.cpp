@@ -17,7 +17,6 @@ int	main(int ac, char **av)
 		tmp.read();
 		while(1)
 		{
-			std::cout << "111111111111" << std::endl;
 			obj.manager();
 			auto tab = obj.getResult();
 			for (auto &it: tab)
