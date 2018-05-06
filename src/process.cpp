@@ -10,7 +10,6 @@
 Process::Process(std::string socketName, size_t threadMax)
 	:_pool(threadMax)
 {
-	std::cerr<< "process\tbuild\t" << socketName << "\t" << std::endl;
 	_threadMax = threadMax;
 	_pid = 0;
 	_exit_status = false;
@@ -18,11 +17,8 @@ Process::Process(std::string socketName, size_t threadMax)
 	_pid = fork();
 	if (_pid == 0)
 	{
-		std::cerr << "child process :  building Transport" << std::endl;
 		Transport _output(socketName);
-		std::cerr << "child process :  building client Transport" << std::endl;
 		Transport _input(socketName + "1", 2);
-		std::cerr << "child process :  building server Transport" << std::endl;
 		start();
 	}
 }
@@ -41,7 +37,6 @@ void	Process::sendResult()
 	if (tab.size() > 0)
 	{
 		
-		std::cerr<< "process\t" << _sockerName << "\t" << "send result" << std::endl;
 		_start = clock();
 		_end = _start + (CLOCKS_PER_SEC * 5);
 		std::string tmp;
@@ -55,7 +50,6 @@ void	Process::sendResult()
 void	Process::sendInformation()
 {
 	auto nb = _pool.getInfo();
-	std::cerr<< "process\t" << _sockerName << "\t" << "send info\t"<< nb << std::endl;
 	std::string tmp = "info:";
 	tmp += _sockerName + "," + std::to_string(nb) + "\n";
 	_output << tmp;
@@ -88,16 +82,13 @@ void	Process::updateQueu()
 	do {
 		tmp << _input;
 		auto tab = cutString(tmp);
-		std::cout << tab[0] + "|"+tab[1] + "|"+tab[2] + "|" << std::endl;
 		if (tab[0] == "update")
 		{
-			std::cout << 4 << std::endl;
 			sendInformation();
 
 		}
 		if (tab[0] == "queu")
 		{
-			std::cerr<< "process\t" << _sockerName << "\t" << "queu recive\t"<< tmp << std::endl;
 			_queu.push_back({tab[1], tab[2]});
 		}
 	} while (tmp != "");

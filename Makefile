@@ -31,16 +31,6 @@ all: $(NAME)
 $(NAME): $(OBJS)
 	 $(CC) $(CXXFLAGS) $(OBJS) -o $(NAME) $(LDLIBS)
 
-gui:
-	$(MAKE) GUI -C gui/GUI && cp gui/GUI/GUI .
-
-clean_gui:
-	$(MAKE) clean -C gui/GUI
-
-fclean_gui:
-	$(clean_gui)
-	rm GUI
-
 clean:
 	$(RM) $(OBJS)
 

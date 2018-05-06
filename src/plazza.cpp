@@ -14,6 +14,7 @@ Plazza::Plazza(char *str)
 	std::srand(std::time(nullptr));
 	_exit_status = true;
 	_threadMax = atoi(str);
+	_result = std::make_shared<std::vector<std::string>>();
 	_regexList = std::make_shared<std::map<std::string, std::string>>();
 	_queu = std::make_shared<std::vector<std::pair<std::string, std::string>>>();
 	_regexList.get()->insert({"EMAIL", "(\\w+)(\\.|_)?(\\w*)@(\\w+)(\\.(\\w+))+"});
@@ -84,7 +85,6 @@ void	Plazza::manager()
 			buildNewProcess();
 		if (_queu.get()->size() > 0)
 		{
-			std::cout << 1 << std::endl;
 			update();
 			sendToProcess();
 		}
@@ -129,11 +129,8 @@ void	Plazza::update()
 	{
 		_info[nb].get()->_output << "update:\n";
 		std::string tmp;
-		std::cout << 2 << std::endl;
-		do{
-			std::cout << 3 << std::endl;
+		do{	
 			tmp << _info[nb].get()->_input;
-			std::cout << 4 << std::endl;
 			updateData(nb, tmp);
 		}while (tmp != "");
 	}
