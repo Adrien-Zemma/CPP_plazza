@@ -11,7 +11,6 @@
 
 Plazza::Plazza(char *str)
 {
-	std::cerr << "PLAZZA\t" << "Building Plazza" << std::endl;
 	std::srand(std::time(nullptr));
 	_exit_status = true;
 	_threadMax = atoi(str);
@@ -28,7 +27,6 @@ Plazza::~Plazza()
 Plazza::DataProc::DataProc(std::string name, size_t threadMax)
 	:_name(name),_slave(name, threadMax), _input(name, 1), _output(name + "1")
 {
-	std::cerr << "PLAZZA\t" << "slave Build" << std::endl;
 	_infos = 0;
 }
 
@@ -45,10 +43,8 @@ std::vector<std::string>	Plazza::getInfoProcess()
 void	Plazza::buildNewProcess()
 {
 	std::string	tmp;
-	tmp = std::to_string(std::rand() % 1000);
-	std::cerr << "PLAZZA\t" << "Building slave" << std::endl;
+	tmp = std::to_string(std::rand() % 10024 + 2000);
 	_info.push_back(std::make_unique<DataProc>(tmp, _threadMax));
-	std::cerr << "PLAZZA\t" << "apres l'unique pointer" << std::endl;
 }
 
 std::shared_ptr<std::map<std::string, std::string>>	Plazza::getRegexList()
@@ -82,10 +78,8 @@ void	Plazza::sendToProcess()
 
 void	Plazza::manager()
 {
-	std::cerr << "PLAZZA\t" << "wait for order" << std::endl;
 	for (size_t i = 0; i < _queu.get()->size(); i++)
 	{
-		std::cerr << "PLAZZA\t" << "order receve" << std::endl;
 		if (_queu.get()->size() > 0 && _info.size() == 0)
 			buildNewProcess();
 		if (_queu.get()->size() > 0)
@@ -130,11 +124,9 @@ void	Plazza::updateData(size_t nb, std::string info)
 
 void	Plazza::update()
 {
-	std::cerr << "PLAZZA\t" << "updating all info" << std::endl;
 	std::map<std::string, std::string> dataMap;
 	for (size_t nb = 0; nb < _info.size(); nb++)
 	{
-		std::cerr << "PLAZZA\t" << "updating slave "<< nb << std::endl;
 		_info[nb].get()->_output << "update:\n";
 		std::string tmp;
 		std::cout << 2 << std::endl;
