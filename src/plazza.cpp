@@ -129,11 +129,8 @@ void	Plazza::update()
 	{
 		_info[nb].get()->_output << "update:\n";
 		std::string tmp;
-		std::cout << 2 << std::endl;
-		do{
-			std::cout << 3 << std::endl;
+		do{	
 			tmp << _info[nb].get()->_input;
-			std::cout << 4 << std::endl;
 			updateData(nb, tmp);
 		}while (tmp != "");
 	}
