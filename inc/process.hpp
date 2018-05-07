@@ -21,7 +21,7 @@
 
 class Process {
 public:
-	Process(std::string sockerName, size_t threadMax);
+	Process(std::string sockerName, size_t threadMax, int thisPid);
 	~Process();
 	void	start();
 	void	newTask(std::pair<std::string, std::string> order);
@@ -44,7 +44,6 @@ private:
 	bool	_exit_status;
 	std::string _sockerName;
 	Threadpool	_pool;
-	Transport	_input;
 	Transport	_output;
 	std::vector<std::pair<std::string, std::string>>	_queu;
 	std::vector<std::string> _result; //file, result
