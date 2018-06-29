@@ -37,6 +37,6 @@ private:
 	void	manageFd(fd_set *rfds);
 	void	lunchFork(std::string cmd);
 	void	manageQueu(std::string cmd);
-	void	checkInMessage(fd_set *rfds);
 	void	runThreadPool(std::string cmd);
+	std::vector<std::string>	cutSemiColon(std::string cmd);
 };

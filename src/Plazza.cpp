@@ -11,28 +11,23 @@ Plazza::Plazza(int threadMax)
 {
 	_continu = true;
 	this->_threadMax = threadMax;
-	_tv.tv_sec = 1;
+	_tv.tv_sec = 10;
 	_tv.tv_usec = 0;
-	_regexList.insert({"EMAIL", "([a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+)"});
+	_regexList.insert({"EMAIL", "(\\w+)(\\.|_)?(\\w*)@(\\w+)(\\.(\\w+))+"});
+	_regexList.insert({"PHONE", ""});
+	_regexList.insert({"IP", "[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}"});	
 }
 
 void	Plazza::start()
 {
-	int retval;
-	fd_set rfds;
+	std::string txt;
 
 	while(_continu)
 	{
-		FD_ZERO(&rfds);
-		setFd(&rfds);
-		retval = select(1, &rfds, NULL, NULL, &_tv);
-		if (retval == -1)
-			_continu = false;
-		manageFd(&rfds);
-		printResult();
+		std::getline(std::cin, txt);
+		manageQueu(txt);
 		manageFork();
 	}
-	printResult();
 }
 
 void	Plazza::manageFork()
@@ -60,7 +55,7 @@ std::pair<std::string, std::string> cutString(std::string cmd)
 		x++;
 		tmp.first += el;
 	}
-	cmd.erase(cmd.begin(), cmd.begin() + x);
+	cmd.erase(cmd.begin(), cmd.begin() + (x +1));
 	for(auto el: cmd)
 	{
 		tmp.second += el;
@@ -71,8 +66,7 @@ std::pair<std::string, std::string> cutString(std::string cmd)
 void	Plazza::runThreadPool(std::string cmd)
 {
 	auto data = cutString(cmd);
-	data.second = _regexList[data.second];
-	Threadpool pool(data.first, data.second, _threadMax);
+	Threadpool pool(data.first, _regexList[data.second], _threadMax);
 	auto tmp = pool.getResult();
 	for (auto el: tmp)
 		std::cout << el << std::endl;
@@ -105,52 +99,25 @@ void	Plazza::setFd(fd_set *rfds)
 	}
 }
 
-void	Plazza::manageFd(fd_set *rfds)
+std::vector<std::string>	Plazza::cutSemiColon(std::string cmd)
 {
 	std::string txt;
-
-	if (FD_ISSET(0, rfds))
+	std::vector<std::string> tmp;
+	for(auto el: cmd)
 	{
-		std::getline(std::cin, txt);
-		manageQueu(txt);
-	}
-	else
-	{
-		checkInMessage(rfds);
-	}
-}
-
-void	Plazza::readInMessage(int fd)
-{
-	int ret;
-	char buff[2];
-	std::string txt;
-
-	do{
-		ret = read(fd, buff, 1);
-		if (buff[0] == '\n')
+		if (el == ';')
 		{
-			_resultList.push_back(txt);
+			tmp.push_back(txt);
 			txt.clear();
 		}
 		else
-			txt += buff[0];
-	}while(ret != 0);
-}
-
-void	Plazza::checkInMessage(fd_set *rfds)
-{
-	for(auto el : _fdList)
-	{
-		if (FD_ISSET(el, rfds))
-		{
-			readInMessage(el);
-		}
+			txt += el;
 	}
+	tmp.push_back(txt);
+	return tmp;
 }
 
 void	Plazza::manageQueu(std::string cmd)
 {
 	_queu.push_back(cmd);
-
 }

@@ -6,6 +6,7 @@
 */
 
 #include "Threadpool.hpp"
+#include <iostream>
 
 Threadpool::Threadpool(std::string cmd, std::string reg, int threadMax)
 {
