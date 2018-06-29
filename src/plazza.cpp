@@ -26,8 +26,9 @@ Plazza::~Plazza()
 {}
 
 Plazza::DataProc::DataProc(std::string name, size_t threadMax)
-	:_name(name),_slave(name, threadMax), _input(name, 1), _output(name + "1")
+	:_name(name),_slave(name, threadMax, getpid()), _input(name, 42)
 {
+	std::cout << "end coter plazza" << std::endl;
 	_infos = 0;
 }
 
@@ -71,7 +72,7 @@ void	Plazza::sendToProcess()
 	{
 		for (size_t nb = 0; nb < it.get()->_infos && _queu.get()->size() > 0; nb ++)
 		{
-			it.get()->_output << "queu:" + _queu.get()->begin()->first + "," + _queu.get()->begin()->first + "\n";
+			it.get()->_input << "queu:" + _queu.get()->begin()->first + "," + _queu.get()->begin()->first + "\n";
 			_queu.get()->erase(_queu.get()->begin());
 		}
 	}
@@ -81,10 +82,9 @@ void	Plazza::manager()
 {
 	for (size_t i = 0; i < _queu.get()->size(); i++)
 	{
-		if (_queu.get()->size() > 0 && _info.size() == 0)
-			buildNewProcess();
 		if (_queu.get()->size() > 0)
 		{
+			buildNewProcess();
 			update();
 			sendToProcess();
 		}
@@ -124,10 +124,9 @@ void	Plazza::updateData(size_t nb, std::string info)
 
 void	Plazza::update()
 {
-	std::map<std::string, std::string> dataMap;
 	for (size_t nb = 0; nb < _info.size(); nb++)
 	{
-		_info[nb].get()->_output << "update:\n";
+		_info[nb].get()->_input << "update:\n";
 		std::string tmp;
 		do{	
 			tmp << _info[nb].get()->_input;

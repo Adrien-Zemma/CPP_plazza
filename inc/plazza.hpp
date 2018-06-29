@@ -44,7 +44,6 @@ public:
 		std::string	_name;
 		Process		_slave;
 		Transport	_input;
-		Transport	_output;
 		size_t		_infos;
 	};
 	std::vector<std::string>	getResult(); // file result

@@ -7,7 +7,7 @@
 
 #include "process.hpp"
 
-Process::Process(std::string socketName, size_t threadMax)
+Process::Process(std::string socketName, size_t threadMax, int thisPid)
 	:_pool(threadMax)
 {
 	_threadMax = threadMax;
@@ -15,10 +15,10 @@ Process::Process(std::string socketName, size_t threadMax)
 	_exit_status = false;
 	_sockerName = socketName;
 	_pid = fork();
-	if (_pid == 0)
+	if (getpid() != thisPid)
 	{
-		Transport _output(socketName);
-		Transport _input(socketName + "1", 2);
+		_output = Transport(socketName);
+		std::cout << "end coter process" << std::endl;
 		start();
 	}
 }
@@ -65,12 +65,12 @@ std::vector<std::string>	Process::cutString(std::string str)
 	tmp.push_back(line);
 	line.clear();
 	nb++;
-	for (; str[nb] != ',' && nb < str.size(); nb++)
+	for (; nb < str.size() && str[nb] != ','; nb++)
 		line += str[nb];
 	tmp.push_back(line);
 	line.clear();
 	nb++;
-	for (; str[nb] != '\n' && nb < str.size(); nb++)
+	for (; nb < str.size() && str[nb] != '\n'; nb++)
 		line += str[nb];
 	tmp.push_back(line);
 	return tmp;
@@ -78,14 +78,13 @@ std::vector<std::string>	Process::cutString(std::string str)
 
 void	Process::updateQueu()
 {
-	std::string	tmp = "C";
+	std::string	tmp;
 	do {
-		tmp << _input;
+		tmp << _output;
 		auto tab = cutString(tmp);
 		if (tab[0] == "update")
 		{
 			sendInformation();
-
 		}
 		if (tab[0] == "queu")
 		{
