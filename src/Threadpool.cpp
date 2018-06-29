@@ -6,7 +6,6 @@
 */
 
 #include "Threadpool.hpp"
-#include <iostream>
 
 Threadpool::Threadpool(std::string cmd, std::string reg, int threadMax)
 {
@@ -58,7 +57,10 @@ void	Threadpool::getRegex(std::string line, std::regex reg)
 	while (std::regex_search(line, m, reg))
 	{
 		for (auto x:m)
+		{
 			result.push_back(x);
+			break;
+		}
 		line = m.suffix().str();
 	}
 	_lockOutput.lock();

@@ -5,7 +5,7 @@
 ** Plazza
 */
 
-#include "Plazza.h"
+#include "Plazza.hpp"
 
 Plazza::Plazza(int threadMax)
 {
@@ -13,6 +13,7 @@ Plazza::Plazza(int threadMax)
 	this->_threadMax = threadMax;
 	_tv.tv_sec = 1;
 	_tv.tv_usec = 0;
+	_regexList.insert({"EMAIL", "([a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+)"});
 }
 
 void	Plazza::start()
@@ -70,7 +71,7 @@ std::pair<std::string, std::string> cutString(std::string cmd)
 void	Plazza::runThreadPool(std::string cmd)
 {
 	auto data = cutString(cmd);
-	data.second = "\\b(sub)([^ ]*)";
+	data.second = _regexList[data.second];
 	Threadpool pool(data.first, data.second, _threadMax);
 	auto tmp = pool.getResult();
 	for (auto el: tmp)
@@ -81,9 +82,7 @@ void	Plazza::lunchFork(std::string cmd)
 {
 	if (fork() == 0)
 	{
-		//runConnection();
 		runThreadPool(cmd);
-		//sendResult()
 		exit(0);
 	}
 }

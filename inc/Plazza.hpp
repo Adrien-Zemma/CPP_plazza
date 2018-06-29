@@ -28,6 +28,7 @@ private:
 	std::vector<int> _fdList;
 	std::vector<std::string> _queu;
 	std::vector<std::string> _resultList;
+	std::map<std::string, std::string> _regexList;
 	
 	void	manageFork();
 	void	printResult();

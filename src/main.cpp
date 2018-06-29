@@ -5,7 +5,7 @@
 ** main
 */
 
-#include "Plazza.h"
+#include "Plazza.hpp"
 
 int main()
 {
