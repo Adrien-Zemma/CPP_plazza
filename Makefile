@@ -12,6 +12,7 @@ CC	= g++
 RM	= rm -f
 
 SRCS	= ./src/Plazza.cpp \
+	  ./src/Threadpool.cpp\
 	./src/main.cpp
 
 OBJS	= $(SRCS:.cpp=.o)

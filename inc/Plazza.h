@@ -7,12 +7,14 @@
 
 #include <vector>
 #include <string>
-#include <iostream>
 #include <stdio.h>
+#include <unistd.h>
 #include <stdlib.h>
+#include <iostream>
+#include <iostream>
 #include <sys/time.h>
 #include <sys/types.h>
-#include <unistd.h>
+#include "Threadpool.hpp"
 
 class Plazza
 {
@@ -35,4 +37,5 @@ private:
 	void	lunchFork(std::string cmd);
 	void	manageQueu(std::string cmd);
 	void	checkInMessage(fd_set *rfds);
+	void	runThreadPool(std::string cmd);
 };

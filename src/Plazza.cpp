@@ -12,8 +12,7 @@ Plazza::Plazza(int threadMax)
 	_continu = true;
 	this->_threadMax = threadMax;
 	_tv.tv_sec = 1;
-    	_tv.tv_usec = 0;
-     		
+	_tv.tv_usec = 0;
 }
 
 void	Plazza::start()
@@ -38,7 +37,7 @@ void	Plazza::start()
 void	Plazza::manageFork()
 {
 	std::string cmd;
-	while (_queu.size > 0)
+	while (_queu.size() > 0)
 	{
 		if (_queu.size() > 0)
 		{
@@ -49,12 +48,40 @@ void	Plazza::manageFork()
 	}
 }
 
+std::pair<std::string, std::string> cutString(std::string cmd)
+{
+	int x = 0;
+	std::pair<std::string, std::string> tmp;
+	for (auto el: cmd)
+	{
+		if (el == ' ')
+			break;
+		x++;
+		tmp.first += el;
+	}
+	cmd.erase(cmd.begin(), cmd.begin() + x);
+	for(auto el: cmd)
+	{
+		tmp.second += el;
+	}
+	return tmp;
+}
+
+void	Plazza::runThreadPool(std::string cmd)
+{
+	auto data = cutString(cmd);
+	Threadpool pool(data.first, data.second, _threadMax);
+	auto tmp = pool.getResult();
+}
+
 void	Plazza::lunchFork(std::string cmd)
 {
 	if (fork() == 0)
 	{
-		runConnection();
+		//runConnection();
 		runThreadPool(cmd);
+		//sendResult()
+		exit(0);
 	}
 }
 
