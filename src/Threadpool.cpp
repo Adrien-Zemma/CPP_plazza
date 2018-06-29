@@ -6,6 +6,7 @@
 */
 
 #include "Threadpool.hpp"
+#include <iostream>
 
 Threadpool::Threadpool(std::string cmd, std::string reg, int threadMax)
 {
@@ -21,13 +22,24 @@ Threadpool::Threadpool(std::string cmd, std::string reg, int threadMax)
 	}
 	_exit = true;
 	for (int i = 0; i < threadMax; i++)
-		_threadList.push_back(std::thread(run));
+		_threadList.push_back(std::thread([this](){run();}));
+	size_t status;
+	do{
+		_lockInput.lock();
+		status = _input.size();
+		_lockInput.unlock();
+	}while(status != 0);
+	_lockExit.lock();
+	_exit = false;
+	_lockExit.unlock();
 	for(auto &el: _threadList)
-		el.join();	
+		el.join();
 }
 
 Threadpool::~Threadpool()
-{}
+{
+	
+}
 
 std::vector<std::string> Threadpool::getResult()
 {

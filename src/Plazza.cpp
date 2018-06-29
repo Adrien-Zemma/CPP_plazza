@@ -70,8 +70,11 @@ std::pair<std::string, std::string> cutString(std::string cmd)
 void	Plazza::runThreadPool(std::string cmd)
 {
 	auto data = cutString(cmd);
+	data.second = "\\b(sub)([^ ]*)";
 	Threadpool pool(data.first, data.second, _threadMax);
 	auto tmp = pool.getResult();
+	for (auto el: tmp)
+		std::cout << el << std::endl;
 }
 
 void	Plazza::lunchFork(std::string cmd)
