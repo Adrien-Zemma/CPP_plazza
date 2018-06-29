@@ -11,13 +11,9 @@ CC	= g++
 
 RM	= rm -f
 
-SRCS	= ./src/operateurOverload.cpp \
-	  ./src/plazza.cpp \
-	  ./src/parse.cpp	\
-	  ./src/main.cpp \
-	  ./src/process.cpp \
-	  ./src/threadpool.cpp \
-	  ./src/transport.cpp 
+SRCS	= ./src/Plazza.cpp \
+	  ./src/Threadpool.cpp\
+	./src/main.cpp
 
 OBJS	= $(SRCS:.cpp=.o)
 

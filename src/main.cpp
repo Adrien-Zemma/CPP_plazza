@@ -1,24 +1,20 @@
 /*
 ** EPITECH PROJECT, 2018
-** plazza
+** Plazza
 ** File description:
 ** main
 */
 
-#include "plazza.hpp"
-#include "parse.hpp"
+#include "Plazza.hpp"
 
-int	main(int ac, char **av)
+int main(int ac, char **av)
 {
 	if (ac == 2)
 	{
-		Plazza obj(av[1]);
-		Parse tmp(obj.getRegexList(), obj.getQueu());
-		tmp.read();
-		while(1)
-		{
-			obj.manager();
-		}
+		if (atoi(av[1]) == 0)
+				return 84;
+		Plazza lol(atoi(av[1]));
+		lol.start();
 		return 0;
 	}
 	return 84;
