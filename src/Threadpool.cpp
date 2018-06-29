@@ -16,8 +16,8 @@ Threadpool::Threadpool(std::string cmd, std::string reg, int threadMax)
 	if(file)
 	{
 		std::string line;
-		std::getline(file, line);
-		_input.push_back(line);
+		while (std::getline(file, line))
+			_input.push_back(line);
 		file.close();
 	}
 	_exit = true;
@@ -52,17 +52,15 @@ std::vector<std::string> Threadpool::getResult()
 
 void	Threadpool::getRegex(std::string line, std::regex reg)
 {
-	std::smatch m;
+	std::smatch pieces_match;
+	std::regex pieces_regex(reg);
 	std::vector<std::string> result;
-  
-	while (std::regex_search(line, m, reg))
+	
+	if (std::regex_match(line, pieces_match, pieces_regex))
 	{
-		for (auto x:m)
-		{
-			result.push_back(x);
-			break;
-		}
-		line = m.suffix().str();
+		std::ssub_match sub_match = pieces_match[0];
+		std::string piece = sub_match.str();
+		result.push_back(piece);
 	}
 	_lockOutput.lock();
 	for (auto el: result)

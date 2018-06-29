@@ -13,9 +13,9 @@ Plazza::Plazza(int threadMax)
 	this->_threadMax = threadMax;
 	_tv.tv_sec = 10;
 	_tv.tv_usec = 0;
-	_regexList.insert({"IP", "([0-9]{1,3}.){3}[0-9]{1,3}"});
+	_regexList.insert({"IP", "(\\d{1,3}(\\.\\d{1,3}){3})"});
 	_regexList.insert({"EMAIL", "(\\w+)(\\.|_)?(\\w*)@(\\w+)(\\.(\\w+))+"});
-	_regexList.insert({"PHONE", ""});
+	_regexList.insert({"PHONE", "0[0-9]( ?[0-9]{2}){4}"});
 }
 
 void	Plazza::start()
