@@ -117,7 +117,35 @@ std::vector<std::string>	Plazza::cutSemiColon(std::string cmd)
 	return tmp;
 }
 
+std::string	Plazza::clearLine(std::string line)
+{
+	while(line[0] == ' ')
+		line.erase(line.begin());
+	return line;
+}
+
+std::vector<std::string> Plazza::split_commands(std::string command)
+{
+	std::vector<std::string> ne;
+	std::string line;
+
+	for (int i = 0; command[i]; i++) {
+		if (command[i] == ';') {
+			line = clearLine(line);
+			ne.push_back(line);
+			line.clear();
+		}
+		else
+			line.push_back(command[i]);
+	}
+	line = clearLine(line);
+	ne.push_back(line);
+	return ne;
+}
+
 void	Plazza::manageQueu(std::string cmd)
 {
-	_queu.push_back(cmd);
+	auto tmp = split_commands(cmd);
+	for (auto el : tmp)
+		_queu.push_back(el);
 }

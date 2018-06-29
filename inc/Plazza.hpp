@@ -38,5 +38,7 @@ private:
 	void	lunchFork(std::string cmd);
 	void	manageQueu(std::string cmd);
 	void	runThreadPool(std::string cmd);
+	std::string	clearLine(std::string line);
+	std::vector<std::string> split_commands(std::string command);
 	std::vector<std::string>	cutSemiColon(std::string cmd);
 };
